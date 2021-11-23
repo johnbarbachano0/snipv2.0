@@ -1,0 +1,29 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.23.0",
+    "bcrypt": "^5.0.1",
+    "connect-flash": "^0.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "helmet": "^4.6.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.3.0",
+    "nodemon": "^2.0.13",
+    "passport": "^0.5.0",
+    "passport-local": "^1.0.0",
+    "sequelize": "^6.7.0",
+    "sequelize-cli": "^5.0.0"
+  }
+}
