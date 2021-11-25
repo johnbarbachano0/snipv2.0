@@ -103,6 +103,7 @@ router.get("/success", (req, res, next) => {
     respObj.hash = "******";
     res.send(respObj);
   } catch (error) {
+    console.log(error);
     createTrail(
       "Login success redirect",
       "Error during success redirect",
@@ -119,11 +120,14 @@ router.get("/success", (req, res, next) => {
 router.get("/failure", (req, res, next) => {
   try {
     const loginMsg = req.session.flash.message[0];
+    console.log(loginMsg);
     const userId = req.session.flash.userId[0];
+    console.log(userId);
     createTrail("User Login", loginMsg, null, null, userId, null);
     const obj = { id: null };
     res.send(obj);
   } catch (error) {
+    console.log(error);
     createTrail(
       "Failed login redirect",
       "Error during fail redirect",

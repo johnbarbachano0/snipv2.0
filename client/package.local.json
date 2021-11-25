@@ -16,8 +16,6 @@
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.23.0",
     "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "path": "^0.12.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.17.5",
@@ -30,8 +28,10 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "node app.js",
-    "build": "react-scripts build"
+    "start": "set PORT=4005 && react-scripts start",
+    "build": "react-scripts build",
+    "dev": "set PORT=4005 && react-scripts start",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
