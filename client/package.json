@@ -31,7 +31,8 @@
   },
   "scripts": {
     "start": "node app.js",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "dev": "set PORT=4005 && react-scripts start"
   },
   "eslintConfig": {
     "extends": [

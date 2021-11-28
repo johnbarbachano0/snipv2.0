@@ -1,11 +1,12 @@
 import React, { createContext, useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-
+import useMediaQuery from "@mui/material/useMediaQuery";
 export const themeContext = createContext(null);
 
 export default function ThemeContext(props) {
   const [darkMode, setDark] = useState(true);
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   const theme = React.useMemo(
     () =>
@@ -23,7 +24,7 @@ export default function ThemeContext(props) {
 
   return (
     <div>
-      <themeContext.Provider value={{ darkMode, setDark, theme }}>
+      <themeContext.Provider value={{ darkMode, setDark, theme, isMobile }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           {props.children}

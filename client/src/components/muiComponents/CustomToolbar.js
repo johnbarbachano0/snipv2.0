@@ -14,8 +14,12 @@ function CustomToolbar({ onSelectedDel, disabled, role }) {
   return (
     <GridToolbarContainer className={gridClasses.toolbarContainer}>
       <GridToolbarExport />
-      <GridToolbarColumnsButton />
-      <GridToolbarFilterButton />
+      <GridToolbarColumnsButton
+        sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
+      />
+      <GridToolbarFilterButton
+        sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
+      />
       <GridToolbarDensitySelector sx={{ marginRight: 2 }} />
       {role === "Admin" && (
         <Button

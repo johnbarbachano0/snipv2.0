@@ -93,7 +93,13 @@ function Homepage() {
         </Grid>{" "}
       </Box>
 
-      {showAlert && <Alerts type={alert.type} message={alert.message} />}
+      {showAlert && (
+        <Alerts
+          type={alert.type}
+          message={alert.message}
+          closeAlert={() => setShowAlert(false)}
+        />
+      )}
       {showAddNewPin && (
         <AddNewPin
           onAddNewCancel={() => {

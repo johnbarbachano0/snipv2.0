@@ -5,9 +5,8 @@ const { createTrail } = require("../middlewares/miscjs");
 
 //Get Comment By PinId
 router.get("/:pinId", (req, res, next) => {
-  const pinId = req.params.pinId;
   Comments.findAll({
-    where: { PinId: pinId, status: true },
+    where: { PinId: req.params.pinId, status: true },
     order: [["updatedAt", "DESC"]],
     include: { model: Users, required: true, attributes: ["username"] },
   })
@@ -29,9 +28,7 @@ router.get("/:pinId", (req, res, next) => {
 
 //Post New Comment
 router.post("/", (req, res, next) => {
-  const commentData = req.body;
-  const userId = req.body.UserId;
-  Comments.create(commentData)
+  Comments.create(req.body)
     .then((comment) => {
       createTrail(
         "Post Comment",
@@ -48,8 +45,8 @@ router.post("/", (req, res, next) => {
         "Post Comment",
         "Comment failed",
         null,
-        commentData,
-        userId,
+        req.body,
+        req.body.UserId,
         error.message
       );
       res.json(false);

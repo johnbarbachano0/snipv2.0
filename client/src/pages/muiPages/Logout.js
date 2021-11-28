@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { logoutUser } from "../../api/api";
 import { getLogoutImage } from "../../components/MiscJavascript";
 import { Box, Fab, Paper, Tooltip, Typography } from "@mui/material";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 function Logout() {
+  const { id } = useParams();
   const [logoutImage, setLogoutImage] = useState("");
   const history = useHistory();
   const [timer, setTimer] = useState(60);
@@ -12,8 +13,9 @@ function Logout() {
   useEffect(() => {
     const image = getLogoutImage();
     setLogoutImage(image);
-    logoutUser();
+    logoutUser(id);
     sessionStorage.clear();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

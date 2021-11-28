@@ -92,9 +92,7 @@ router.get("/id/:id", async (req, res, next) => {
 
 //Post New Link
 router.post("/", (req, res, next) => {
-  const link = req.body;
-  const userId = req.user.id;
-  Links.create(link)
+  Links.create(req.body)
     .then((createdLink) => {
       createTrail(
         "Create New Link",
@@ -112,7 +110,7 @@ router.post("/", (req, res, next) => {
         "Error during link save",
         null,
         link,
-        userId,
+        req.user.id,
         error.message
       );
       res.send(false);
@@ -121,13 +119,11 @@ router.post("/", (req, res, next) => {
 
 //Delete Link (update status to false)
 router.delete("/id/:id", (req, res, next) => {
-  const linkId = req.params.id;
-  const userId = req.user.id;
-  const getPrevValue = Links.findByPk(linkId);
-  getPrevValue.then((prevValue) => {
-    Links.update({ status: false }, { where: { id: linkId } })
+  Links.findByPk(req.params.id).then((prevValue) => {
+    const userId = prevValue.UserId;
+    Links.update({ status: false }, { where: { id: req.params.id } })
       .then((response) => {
-        return Links.findOne({ where: { id: linkId } });
+        return Links.findOne({ where: { id: req.params.id } });
       })
       .then((newValue) => {
         createTrail(
@@ -145,7 +141,7 @@ router.delete("/id/:id", (req, res, next) => {
           "Delete Link",
           "Error during link delete",
           null,
-          { id: linkId },
+          { id: req.params.id },
           userId,
           error.message
         );
@@ -156,8 +152,7 @@ router.delete("/id/:id", (req, res, next) => {
 
 //Bulk Delete Link (update status to false)
 router.delete("/ids", (req, res, next) => {
-  const { linkIds, userId } = req.body;
-  Links.update({ status: false }, { where: { id: linkIds } })
+  Links.update({ status: false }, { where: { id: req.body.linkIds } })
     .then((response) => {
       return response;
     })
@@ -166,8 +161,8 @@ router.delete("/ids", (req, res, next) => {
         "Bulk Delete Link",
         "Bulk Delete link success",
         { status: true },
-        { id: linkIds, status: false },
-        userId,
+        { id: req.body.linkIds, status: false },
+        req.body.userId,
         null
       );
       res.send(true);
@@ -177,24 +172,21 @@ router.delete("/ids", (req, res, next) => {
         "Delete Link",
         "Error during link delete",
         null,
-        { id: linkIds },
-        userId,
+        { id: req.body.linkIds },
+        req.body.userId,
         error.message
       );
       res.send(false);
     });
 });
 
-//Update Pin
+//Update Links
 router.patch("/id/:id", (req, res, next) => {
-  const linkId = req.params.id;
-  const userId = req.user.id;
-  const update = req.body;
-  const getPrevValue = Links.findByPk(linkId);
-  getPrevValue.then((prevValue) => {
-    Links.update(update, { where: { id: linkId } })
+  Links.findByPk(req.params.id).then((prevValue) => {
+    const userId = prevValue.UserId;
+    Links.update(req.body.data, { where: { id: req.params.id } })
       .then((response) => {
-        return Links.findOne({ where: { id: linkId } });
+        return Links.findOne({ where: { id: req.params.id } });
       })
       .then((newValue) => {
         createTrail(
@@ -212,7 +204,7 @@ router.patch("/id/:id", (req, res, next) => {
           "Update Link",
           "Error during link update",
           null,
-          { id: linkId },
+          { id: req.params.id },
           userId,
           error.message
         );

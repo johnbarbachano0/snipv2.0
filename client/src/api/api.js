@@ -3,11 +3,19 @@ require("dotenv").config();
 const config = {
   withCredentials: true,
 };
+const getHeader = () => {
+  return {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: sessionStorage.getItem("sessionId"),
+    },
+  };
+};
 
 //Check username is available
 export function isUsernameAvailable(username) {
-  const url = `${process.env.REACT_APP_SERVER}/auth/username/${username}`;
   if (username.length > 3) {
+    let url = `${process.env.REACT_APP_SERVER}/auth/username/${username}`;
     const isAuth = axios
       .get(url, config)
       .then((res) => {
@@ -48,9 +56,13 @@ export function authenticateUser(data) {
   const authUser = axios
     .post(url, data, config)
     .then((res) => {
-      const user = res.data;
+      const user = res.data.user;
+      const session = res.data.session;
+      const sessionId = res.data.sessionId;
       sessionStorage.setItem("isAuth", JSON.stringify(true));
       sessionStorage.setItem("user", JSON.stringify(user));
+      sessionStorage.setItem("session", JSON.stringify(session));
+      sessionStorage.setItem("sessionId", sessionId);
       if (user.id) {
         return true;
       } else {
@@ -59,7 +71,6 @@ export function authenticateUser(data) {
     })
     .catch((error) => {
       if (error) {
-        console.log(error);
         window.location.href = `/error/${error.response.status}`;
       }
     });
@@ -67,14 +78,23 @@ export function authenticateUser(data) {
 }
 
 //Logout User
-export function logoutUser() {
-  const url = `${process.env.REACT_APP_SERVER}/auth/logout`;
-  axios.get(url, config).catch((error) => {
-    console.log(error);
-    if (error) {
-      window.location.href = `/error/${error.response.status}`;
-    }
-  });
+export function logoutUser(userId) {
+  const url = `${process.env.REACT_APP_SERVER}/auth/logout/${userId}`;
+  axios
+    .get(url, config)
+    .then((res) => {
+      console.log(res.data.id);
+      if (res.data.id === null) {
+        return true;
+      } else {
+        return false;
+      }
+    })
+    .catch((error) => {
+      if (error) {
+        window.location.href = `/error/${error.response.status}`;
+      }
+    });
 }
 
 //Get All Pins
@@ -144,14 +164,14 @@ export function postNewPin(data) {
 
 //Delete Pin by Id
 export function deletePinById(id) {
+  const header = getHeader();
   const url = `${process.env.REACT_APP_SERVER}/pin/id/${id}`;
   const isDeleted = axios
-    .delete(url, config)
+    .delete(url, header)
     .then((res) => {
       return res.data;
     })
     .catch((error) => {
-      console.log(error);
       if (error) {
         window.location.href = `/error/${error.response.status}`;
       }
@@ -161,9 +181,10 @@ export function deletePinById(id) {
 
 //Update Pin
 export function patchPin(data) {
+  const header = getHeader();
   const url = `${process.env.REACT_APP_SERVER}/pin/id/${data.PinId}`;
   const isUpdated = axios
-    .patch(url, data, config)
+    .patch(url, { data: data, ...header })
     .then((res) => {
       return res.data;
     })
@@ -257,9 +278,10 @@ export function postNewLink(data) {
 
 //Delete by Link Id
 export function deleteByLinkId(data) {
+  const header = getHeader();
   const url = `${process.env.REACT_APP_SERVER}/link/id/${data}`;
   const isDeleted = axios
-    .delete(url, config)
+    .delete(url, header)
     .then((res) => {
       return res.data;
     })
@@ -273,9 +295,10 @@ export function deleteByLinkId(data) {
 
 //Bulk Delete by Link Ids
 export function bulkDeleteByLinkIds(data) {
+  const header = getHeader();
   const url = `${process.env.REACT_APP_SERVER}/link/ids`;
   const isBulkDeleted = axios
-    .delete(url, { data: data })
+    .delete(url, { data: data, ...header })
     .then((res) => {
       return res.data;
     })
@@ -289,9 +312,10 @@ export function bulkDeleteByLinkIds(data) {
 
 //Patch by Link Id
 export function patchLinkById(data, linkId) {
+  const header = getHeader();
   const url = `${process.env.REACT_APP_SERVER}/link/id/${linkId}`;
   const isUpdated = axios
-    .patch(url, data, config)
+    .patch(url, { data: data, ...header })
     .then((res) => {
       return res.data;
     })

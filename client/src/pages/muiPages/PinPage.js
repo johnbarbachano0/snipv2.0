@@ -93,7 +93,13 @@ function PinPage() {
           </Grid>
         </Box>
       )}
-      {showAlert && <Alerts type={alert.type} message={alert.message} />}
+      {showAlert && (
+        <Alerts
+          type={alert.type}
+          message={alert.message}
+          closeAlert={() => setShowAlert(false)}
+        />
+      )}
       {!pin && !comments && (
         <Loading type="bubbles" color="#1DB9C3" height="10rem" width="10rem" />
       )}

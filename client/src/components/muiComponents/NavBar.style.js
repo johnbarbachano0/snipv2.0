@@ -14,7 +14,7 @@ const useStyles = makeStyles({
   appBar: {
     width: "100%",
   },
-  logoBox: {
+  logo: {
     color: "#ffea00",
     "&:hover": { color: "rgba(255, 251, 0, 0.635)" },
     fontFamily: "Sonsie One",

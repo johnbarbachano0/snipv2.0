@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "zxQvDcOGQd",
-    "password": "BHJfcail41",
-    "database": "zxQvDcOGQd",
-    "host": "remotemysql.com",
+    "username": "root",
+    "password": "@PLDTWIFI42CIGnn",
+    "database": "snipdb",
+    "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {

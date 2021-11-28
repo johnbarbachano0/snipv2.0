@@ -17,16 +17,50 @@ const alertStyle = {
   zIndex: 10,
 };
 
-function Alerts({ type, message }) {
+function Alerts({ type, message, closeAlert }) {
   return (
     <Stack style={{ ...alertStyle }} spacing={2}>
       <Paper>
         {(type === "failure" || type === "error") && (
-          <Alert severity="error">{message}</Alert>
+          <Alert
+            severity="error"
+            onClose={() => {
+              closeAlert();
+            }}
+          >
+            {message}
+          </Alert>
         )}
-        {type === "warning" && <Alert severity="warning">{message}</Alert>}
-        {type === "info" && <Alert severity="info">{message}</Alert>}
-        {type === "success" && <Alert severity="success">{message}</Alert>}
+        {type === "warning" && (
+          <Alert
+            severity="warning"
+            onClose={() => {
+              closeAlert();
+            }}
+          >
+            {message}
+          </Alert>
+        )}
+        {type === "info" && (
+          <Alert
+            severity="info"
+            onClose={() => {
+              closeAlert();
+            }}
+          >
+            {message}
+          </Alert>
+        )}
+        {type === "success" && (
+          <Alert
+            severity="success"
+            onClose={() => {
+              closeAlert();
+            }}
+          >
+            {message}
+          </Alert>
+        )}
       </Paper>
     </Stack>
   );

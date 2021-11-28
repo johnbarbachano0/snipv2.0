@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const { Users, AuditTrail } = require("../models");
+const { Users } = require("../models");
 const {
   genHash,
   createResponse,
@@ -78,72 +78,107 @@ router.post("/register", (req, res, next) => {
 });
 
 //Login User
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    failureRedirect: "/auth/failure",
-    successRedirect: "/auth/success",
-  }),
-  (error, req, res, next) => {
-    if (error) {
+//commented to implement custom login method below
+// router.post(
+//   "/login",
+//   passport.authenticate("local", {
+//     failureRedirect: "/auth/failure",
+//     successRedirect: "/auth/success",
+//   }),
+//   (error, req, res, next) => {
+//     if (error) {
+//       next(error);
+//     }
+//   }
+// );
+
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    const { username } = req.body;
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect(`failure/${username}`);
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect(`success/${username}`);
+    });
+  })(req, res, next);
+});
+
+//Successful login redirect
+router.get("/success/:username", (req, res, next) => {
+  const { username } = req.params;
+  Users.findOne({ where: { username: username } }).then((user) => {
+    const userId = user.id;
+    try {
+      createTrail("User Login", "Login success", null, null, userId, null);
+      const lastLogin = Date.now();
+      Users.update({ lastLogin: lastLogin }, { where: { id: userId } }).then(
+        () => {
+          Users.findOne({ where: { id: userId } }).then((user) => {
+            user.hash = "******";
+            const data = {
+              user: user,
+              session: req.session,
+              sessionId: req.sessionID,
+            };
+            res.json(data);
+          });
+        }
+      );
+    } catch (error) {
+      createTrail(
+        "Login success redirect error",
+        "Error during success redirect",
+        null,
+        null,
+        userId,
+        error.message
+      );
       next(error);
     }
-  }
-);
-//Successful login redirect
-router.get("/success", (req, res, next) => {
-  try {
-    const loginMsg = req.session.flash.message[0];
-    const userId = req.user.id;
-    createTrail("User Login", loginMsg, null, null, userId, null);
-    const lastLogin = Date.now();
-    Users.update({ lastLogin: lastLogin }, { where: { id: userId } });
-    const respObj = req.user;
-    respObj.lastLogin = lastLogin;
-    respObj.hash = "******";
-    res.send(respObj);
-  } catch (error) {
-    console.log(error);
-    createTrail(
-      "Login success redirect",
-      "Error during success redirect",
-      null,
-      null,
-      req.user.id,
-      error.message
-    );
-    next(error);
-  }
+  });
 });
 
 //Failed login redirect
-router.get("/failure", (req, res, next) => {
-  try {
-    const loginMsg = req.session.flash.message[0];
-    console.log(loginMsg);
-    const userId = req.session.flash.userId[0];
-    console.log(userId);
-    createTrail("User Login", loginMsg, null, null, userId, null);
-    const obj = { id: null };
-    res.send(obj);
-  } catch (error) {
-    console.log(error);
-    createTrail(
-      "Failed login redirect",
-      "Error during fail redirect",
-      null,
-      null,
-      req.user.id,
-      error.message
-    );
-    next(error);
-  }
+router.get("/failure/:username", (req, res, next) => {
+  const { username } = req.params;
+  Users.findOne({ where: { username: username } }).then((user) => {
+    const userId = user.id;
+    try {
+      createTrail(
+        "User Login",
+        "Wrong password",
+        null,
+        { username: username },
+        userId,
+        null
+      );
+      const obj = { id: null };
+      res.send(obj);
+    } catch (error) {
+      createTrail(
+        "Login fail redirect error",
+        "Error during fail redirect",
+        null,
+        { username: username },
+        userId,
+        error.message
+      );
+      next(error);
+    }
+  });
 });
 
 //Logout user
-router.get("/logout", (req, res, next) => {
+router.get("/logout/:userId", (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const { userId } = req.params;
     req.logout();
     createTrail("User Logout", "Logout success", null, null, userId, null);
     res.send({ id: null });

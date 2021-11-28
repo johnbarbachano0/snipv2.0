@@ -8,7 +8,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "build", "index.html"));
 });
 
-const port = process.env.PORT || 4007;
+const port = process.env.PORT || 4005;
 app.listen(port, () => {
   console.log(`Listening at port http://localhost:${port}`);
 });

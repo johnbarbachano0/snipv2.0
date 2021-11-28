@@ -12,6 +12,7 @@ const style = {
 };
 
 function AppMenu({ page, anchorEl, menuOpen, handleMenuClose }) {
+  const userObj = JSON.parse(sessionStorage.user);
   const history = useHistory();
   return (
     <Menu
@@ -56,7 +57,7 @@ function AppMenu({ page, anchorEl, menuOpen, handleMenuClose }) {
       )}
       <MenuItem
         sx={{ ...style.logout }}
-        onClick={() => history.push("/logout")}
+        onClick={() => history.push(`/logout/${userObj.id}`)}
       >
         <ExitToAppRoundedIcon />
         Logout

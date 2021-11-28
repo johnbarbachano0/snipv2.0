@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { themeContext } from "./ThemeContext";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { postNewPin } from "../../api/api";
@@ -40,6 +41,7 @@ const useStyles = makeStyles({
 
 function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
   const classes = useStyles();
+  const { isMobile } = useContext(themeContext);
   const userObj = JSON.parse(sessionStorage.user);
   const {
     register,
@@ -104,7 +106,7 @@ function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
               name="description"
               {...register("description")}
               multiline
-              rows={10}
+              rows={isMobile ? 5 : 10}
               placeholder="Enter notes here..."
               inputProps={{
                 maxLength: 2000,

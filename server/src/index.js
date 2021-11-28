@@ -8,7 +8,6 @@ const cors = require("cors");
 const middlewares = require("../middlewares/errorHandlers");
 const db = require("../models");
 const passport = require("passport");
-const flash = require("connect-flash");
 
 //Body Parser
 app.use(express.json());
@@ -36,7 +35,6 @@ app.use(
     },
   })
 );
-app.use(flash());
 
 require("../middlewares/strategy");
 

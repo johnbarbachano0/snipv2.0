@@ -264,7 +264,13 @@ export default function Linker() {
           }}
         />
       </Container>
-      {showAlert && <Alerts type={alert.type} message={alert.message} />}
+      {showAlert && (
+        <Alerts
+          type={alert.type}
+          message={alert.message}
+          closeAlert={() => setShowAlert(false)}
+        />
+      )}
       {showAddNew && (
         <AddNewLink
           openModal={showAddNew}

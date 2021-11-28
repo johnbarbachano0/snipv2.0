@@ -76,17 +76,6 @@ function Profile() {
             </Typography>
           </CardContent>
         </Card>
-
-        {/* <Grid container direction="row" sx={{ marginTop: 8 }}>
-
-        <Typography>Role: {userObj.role}</Typography>
-        <Typography>
-          Last Login: {DateTimeConverter(userObj.lastLogin)}
-        </Typography>
-        <Typography>
-          Date Created: {DateTimeConverter(userObj.createdAt)}
-        </Typography>
-      </Grid> */}
       </Box>
     </>
   );

@@ -66,9 +66,7 @@ router.get("/id/:id", async (req, res, next) => {
 
 //Post New Pin
 router.post("/", (req, res, next) => {
-  const pin = req.body;
-  const userId = req.user.id;
-  Pins.create(pin)
+  Pins.create(req.body)
     .then((createdPin) => {
       createTrail(
         "Create New Pin",
@@ -86,7 +84,7 @@ router.post("/", (req, res, next) => {
         "Error during pin save",
         null,
         pin,
-        userId,
+        req.user.id,
         error.message
       );
       res.send(false);
@@ -95,49 +93,48 @@ router.post("/", (req, res, next) => {
 
 //Delete Pin (update status to false)
 router.delete("/id/:id", (req, res, next) => {
-  const PinId = req.params.id;
-  const userId = req.user.id;
-  const getPrevValue = Pins.findByPk(PinId);
-  getPrevValue.then((prevValue) => {
-    Pins.update({ status: false }, { where: { id: PinId } })
-      .then((response) => {
-        return Pins.findOne({ where: { id: PinId } });
-      })
-      .then((newValue) => {
-        createTrail(
-          "Delete Pin",
-          "Delete success",
-          prevValue,
-          newValue,
-          userId,
-          null
-        );
-        res.send(true);
-      })
-      .catch((error) => {
-        createTrail(
-          "Delete Pin",
-          "Error during pin delete",
-          null,
-          { id: PinId },
-          userId,
-          error.message
-        );
-        res.send(false);
-      });
-  });
+  try {
+    Pins.findByPk(req.params.id).then((prevValue) => {
+      const userId = prevValue.UserId;
+      Pins.update({ status: false }, { where: { id: req.params.id } })
+        .then((response) => {
+          return Pins.findOne({ where: { id: req.params.id } });
+        })
+        .then((newValue) => {
+          createTrail(
+            "Delete Pin",
+            "Delete success",
+            prevValue,
+            newValue,
+            userId,
+            null
+          );
+          res.send(true);
+        })
+        .catch((error) => {
+          createTrail(
+            "Delete Pin",
+            "Error during pin delete",
+            null,
+            { id: req.params.id },
+            userId,
+            error.message
+          );
+          res.send(false);
+        });
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 //Update Pin
 router.patch("/id/:id", (req, res, next) => {
-  const PinId = req.params.id;
-  const userId = req.user.id;
-  const update = req.body;
-  const getPrevValue = Pins.findByPk(PinId);
-  getPrevValue.then((prevValue) => {
-    Pins.update(update, { where: { id: PinId } })
+  Pins.findByPk(req.params.id).then((prevValue) => {
+    const userId = prevValue.UserId;
+    Pins.update(req.body.data, { where: { id: req.params.id } })
       .then((response) => {
-        return Pins.findOne({ where: { id: PinId } });
+        return Pins.findOne({ where: { id: req.params.id } });
       })
       .then((newValue) => {
         createTrail(
@@ -155,7 +152,7 @@ router.patch("/id/:id", (req, res, next) => {
           "Update Pin",
           "Error during pin update",
           null,
-          { id: PinId },
+          { id: req.params.id },
           userId,
           error.message
         );

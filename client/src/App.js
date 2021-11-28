@@ -23,7 +23,7 @@ function App() {
           <ProtectedRoute path="/about" exact component={About} />
           <ProtectedRoute path="/links" exact component={Linker} />
           <ProtectedRoute path="/pin/:id" exact component={PinPage} />
-          <ProtectedRoute path="/logout" exact component={Logout} />
+          <ProtectedRoute path="/logout/:id" exact component={Logout} />
         </Switch>
       </Router>
     </ThemeContext>
