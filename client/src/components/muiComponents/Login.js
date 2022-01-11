@@ -5,8 +5,20 @@ import { loginSchema } from "../../schema/loginSchema";
 import { removeSpace } from "../MiscJavascript";
 import { authenticateUser } from "../../api/api";
 import { useHistory } from "react-router-dom";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, Fab, TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
+import GoogleIcon from "@mui/icons-material/Google";
+import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
+import GitHubIcon from "@mui/icons-material/GitHub";
+require("dotenv").config();
+
+const styles = {
+  socialContainer: {
+    display: "flex",
+    justifyContent: "space-around",
+    margin: 1,
+  },
+};
 
 function Login() {
   const history = useHistory();
@@ -49,6 +61,14 @@ function Login() {
     name === "username" && setUname(removeSpace(value));
     name === "password" && setPword(removeSpace(value));
   }
+
+  const handleSocials = (authProvider) => {
+    try {
+      window.location.href = `${process.env.REACT_APP_SERVER}/auth/login/${authProvider}`;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Box component="form" noValidate sx={{ padding: 2 }}>
@@ -101,6 +121,17 @@ function Login() {
           &#x26A0;{errorMsg}
         </Typography>
       )}
+      <Box sx={styles.socialContainer}>
+        <Fab color="primary" size="small">
+          <GoogleIcon onClick={() => handleSocials("google")} />
+        </Fab>
+        <Fab color="primary" size="small">
+          <FacebookOutlinedIcon onClick={() => handleSocials("facebook")} />
+        </Fab>
+        <Fab color="primary" size="small">
+          <GitHubIcon onClick={() => handleSocials("github")} />
+        </Fab>
+      </Box>
       <LoadingButton
         onClick={handleSubmit(onSubmit)}
         color="primary"

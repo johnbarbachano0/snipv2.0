@@ -77,21 +77,6 @@ router.post("/register", (req, res, next) => {
     });
 });
 
-//Login User
-//commented to implement custom login method below
-// router.post(
-//   "/login",
-//   passport.authenticate("local", {
-//     failureRedirect: "/auth/failure",
-//     successRedirect: "/auth/success",
-//   }),
-//   (error, req, res, next) => {
-//     if (error) {
-//       next(error);
-//     }
-//   }
-// );
-
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     const { username } = req.body;
@@ -108,6 +93,33 @@ router.post("/login", (req, res, next) => {
       return res.redirect(`success/${username}`);
     });
   })(req, res, next);
+});
+
+router.get(
+  "/login/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/login/google/user",
+  passport.authenticate("google", {
+    failureRedirect: "/auth/login/google/user/failure",
+  }),
+  function (req, res) {
+    // Successful authentication, redirect home.
+    res.redirect("/auth//login/google/user/success");
+  }
+);
+
+//OAuth success redirecct
+router.get("/login/google/user/success", (req, res, next) => {
+  console.log("success");
+  console.log(req.user);
+});
+
+router.get("/login/google/user/failure", (req, res, next) => {
+  console.log("failure");
+  console.log(req.user);
 });
 
 //Successful login redirect
