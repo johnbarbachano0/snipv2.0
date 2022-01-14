@@ -11,6 +11,7 @@ import Login from "./pages/muiPages/Login";
 import ErrorPage from "./pages/muiPages/ErrorPage";
 import Timeout from "./pages/muiPages/Timeout";
 import ProtectedRoute from "./pages/muiPages/ProtectedRoute";
+import Socials from "./pages/muiPages/Socials";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <ProtectedRoute path="/pin/:id" exact component={PinPage} />
           <ProtectedRoute path="/logout/:id" exact component={Logout} />
           <Route path="/timeout/:id/:timeoutType" component={Timeout} />
+          <Route path="/login/:provider/:authStatus" component={Socials} />
         </Switch>
       </Router>
     </ThemeContext>

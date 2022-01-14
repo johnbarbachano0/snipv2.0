@@ -64,9 +64,10 @@ function Login() {
 
   const handleSocials = (authProvider) => {
     try {
+      setLoading(true);
       window.location.href = `${process.env.REACT_APP_SERVER}/auth/login/${authProvider}`;
     } catch (error) {
-      console.log(error);
+      history.push("/error/404");
     }
   };
 
@@ -122,13 +123,13 @@ function Login() {
         </Typography>
       )}
       <Box sx={styles.socialContainer}>
-        <Fab color="primary" size="small">
+        <Fab color="primary" size="small" disabled={loading}>
           <GoogleIcon onClick={() => handleSocials("google")} />
         </Fab>
-        <Fab color="primary" size="small">
+        <Fab color="primary" size="small" disabled={loading}>
           <FacebookOutlinedIcon onClick={() => handleSocials("facebook")} />
         </Fab>
-        <Fab color="primary" size="small">
+        <Fab color="primary" size="small" disabled={loading}>
           <GitHubIcon onClick={() => handleSocials("github")} />
         </Fab>
       </Box>

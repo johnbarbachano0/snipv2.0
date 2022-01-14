@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
@@ -16,12 +17,13 @@ router.get("/username/:username", (req, res, next) => {
       res.json(user);
     })
     .catch((error) => {
+      console.log(error);
       createTrail(
         "Check Username Availability",
         "Error during check",
         null,
         null,
-        req.user.id,
+        req?.user?.id,
         error.message
       );
       next(error);
@@ -73,12 +75,14 @@ router.post("/register", (req, res, next) => {
       }
     })
     .catch((error) => {
+      console.log(error);
       next(error);
     });
 });
 
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
+    console.log(user);
     const { username } = req.body;
     if (err) {
       return next(err);
@@ -93,33 +97,6 @@ router.post("/login", (req, res, next) => {
       return res.redirect(`success/${username}`);
     });
   })(req, res, next);
-});
-
-router.get(
-  "/login/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-router.get(
-  "/login/google/user",
-  passport.authenticate("google", {
-    failureRedirect: "/auth/login/google/user/failure",
-  }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect("/auth//login/google/user/success");
-  }
-);
-
-//OAuth success redirecct
-router.get("/login/google/user/success", (req, res, next) => {
-  console.log("success");
-  console.log(req.user);
-});
-
-router.get("/login/google/user/failure", (req, res, next) => {
-  console.log("failure");
-  console.log(req.user);
 });
 
 //Successful login redirect
@@ -185,6 +162,77 @@ router.get("/failure/:username", (req, res, next) => {
       next(error);
     }
   });
+});
+
+// Google OAuth2.0 Login
+router.get(
+  "/login/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/login/google/user",
+  passport.authenticate("google", {
+    failureRedirect: `/login/google/error`,
+  }),
+  function (req, res) {
+    // Successful authentication, redirect home
+    const user = JSON.stringify({ ...req.user, hash: "****" });
+    const session = JSON.stringify(req.session);
+    res.redirect(
+      `${process.env.REACT_APP_CLIENT}/login/google/success?user=${user}&sessionID=${req.sessionID}&session=${session}`
+    );
+  }
+);
+
+// Github OAuth2.0 Login
+router.get(
+  "/login/github",
+  passport.authenticate("github", { scope: ["user"] })
+);
+
+router.get(
+  "/login/github/user",
+  passport.authenticate("github", {
+    failureRedirect: "/login/github/error",
+  }),
+  function (req, res) {
+    // Successful authentication, redirect home
+    const user = JSON.stringify({ ...req.user, hash: "****" });
+    const session = JSON.stringify(req.session);
+    res.redirect(
+      `${process.env.REACT_APP_CLIENT}/login/github/success?user=${user}&sessionID=${req.sessionID}&session=${session}`
+    );
+  }
+);
+
+// Facebook OAuth2.0 Login
+router.get("/login/facebook", passport.authenticate("facebook"));
+
+router.get(
+  "/login/facebook/user",
+  passport.authenticate("facebook", {
+    failureRedirect: "/login/facebook/error",
+  }),
+  function (req, res) {
+    // Successful authentication, redirect home
+    const user = JSON.stringify({ ...req.user, hash: "****" });
+    const session = JSON.stringify(req.session);
+    res.redirect(
+      `${process.env.REACT_APP_CLIENT}/login/facebook/success?user=${user}&sessionID=${req.sessionID}&session=${session}`
+    );
+  }
+);
+
+//Social Failure Redirect
+router.get("/login/error", (req, res, error) => {
+  const authError = JSON.stringify({
+    error: error.name,
+    message: error.message,
+  });
+  res.redirect(
+    `${process.env.REACT_APP_CLIENT}/login/oauth/error?authError=${authError}`
+  );
 });
 
 //Logout user

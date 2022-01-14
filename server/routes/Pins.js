@@ -30,6 +30,7 @@ router.get("/search", (req, res, next) => {
       res.json(pins);
     })
     .catch((error) => {
+      console.log(error);
       createTrail(
         "Get All Pins",
         "Error during get all pins",

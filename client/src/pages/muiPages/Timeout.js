@@ -64,7 +64,6 @@ function Timeout() {
 
   useEffect(() => {
     logoutUser(id);
-    console.log("exec");
     sessionStorage.clear();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
