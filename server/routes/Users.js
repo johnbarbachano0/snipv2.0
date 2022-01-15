@@ -17,7 +17,6 @@ router.get("/username/:username", (req, res, next) => {
       res.json(user);
     })
     .catch((error) => {
-      console.log(error);
       createTrail(
         "Check Username Availability",
         "Error during check",
@@ -75,14 +74,12 @@ router.post("/register", (req, res, next) => {
       }
     })
     .catch((error) => {
-      console.log(error);
       next(error);
     });
 });
 
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    console.log(user);
     const { username } = req.body;
     if (err) {
       return next(err);

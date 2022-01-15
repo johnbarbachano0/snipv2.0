@@ -8,9 +8,6 @@ const notFound = (req, res, next) => {
 
 const errorHandler = (error, req, res, next) => {
   const { statusCode } = res;
-  console.log("errorHandler");
-  console.log(error);
-  console.log(req);
   if (error?.name === "InternalOAuthError") {
     res.redirect("/auth/login/error");
   } else if (statusCode.toString().charAt(0) === "4") {
