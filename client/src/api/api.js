@@ -1,5 +1,5 @@
-const axios = require("axios");
 require("dotenv").config();
+const axios = require("axios");
 const config = {
   withCredentials: true,
 };
@@ -19,7 +19,7 @@ export function isUsernameAvailable(username) {
     const isAuth = axios
       .get(url, config)
       .then((res) => {
-        if (res.data == null) {
+        if (res?.data === null) {
           return true;
         } else {
           return false;
@@ -43,7 +43,7 @@ export function postNewUser(data) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
+      if (error.response) {
         window.location.href = `/error/${error.response.status}`;
       }
     });
@@ -63,7 +63,7 @@ export function authenticateUser(data) {
       sessionStorage.setItem("user", JSON.stringify(user));
       sessionStorage.setItem("session", JSON.stringify(session));
       sessionStorage.setItem("sessionId", sessionId);
-      if (user.id) {
+      if (user?.id) {
         return true;
       } else {
         return false;
@@ -83,8 +83,7 @@ export function logoutUser(userId) {
   axios
     .get(url, config)
     .then((res) => {
-      console.log(res.data.id);
-      if (res.data.id === null) {
+      if (res?.data?.id === null) {
         return true;
       } else {
         return false;

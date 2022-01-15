@@ -24,6 +24,33 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: true,
     },
+    socialId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+      validate: { isEmail: true },
+    },
+    provider: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    accessToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    refreshToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   });
 
   Users.associate = (models) => {
