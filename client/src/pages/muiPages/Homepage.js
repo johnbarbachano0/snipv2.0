@@ -86,6 +86,7 @@ function Homepage() {
                     title={pin.title}
                     desc={pin.description}
                     username={pin.User.username}
+                    name={pin.User.name}
                   />
                 </Grid>
               );

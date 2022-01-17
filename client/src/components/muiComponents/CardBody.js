@@ -16,14 +16,16 @@ const useStyles = makeStyles({
   cardContent: {
     height: 75,
     overflow: "auto",
+    overflowX: "hidden",
   },
   cardContentExpand: {
     height: 200,
     overflow: "auto",
+    overflowX: "hidden",
   },
 });
 
-function CardBody({ id, title, desc, username }) {
+function CardBody({ id, title, desc, username, name }) {
   const { darkMode } = useContext(themeContext);
   const classes = useStyles();
   const history = useHistory();
@@ -35,7 +37,9 @@ function CardBody({ id, title, desc, username }) {
         avatar={
           <Avatar sx={{ bgcolor: "red" }}>
             <Typography variant="h5">
-              {username.charAt(0).toUpperCase()}
+              {name?.length > 0
+                ? name.charAt(0).toUpperCase()
+                : username.charAt(0).toUpperCase()}
             </Typography>
           </Avatar>
         }
@@ -50,7 +54,7 @@ function CardBody({ id, title, desc, username }) {
               : title}
           </Typography>
         }
-        subheader={`@${username}`}
+        subheader={name?.length > 0 ? `${name}` : `@${username}`}
         sx={{
           bgcolor: darkMode ? "#02475E" : "#8AB6D6",
           paddingBottom: 0.5,

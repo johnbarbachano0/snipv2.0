@@ -15,7 +15,7 @@ router.get("/search", (req, res, next) => {
       model: Users,
       as: "User",
       required: true,
-      attributes: ["username"],
+      attributes: ["username", "name"],
     },
     where: {
       [Op.or]: [
@@ -30,7 +30,6 @@ router.get("/search", (req, res, next) => {
       res.json(pins);
     })
     .catch((error) => {
-      console.log(error);
       createTrail(
         "Get All Pins",
         "Error during get all pins",
@@ -47,7 +46,7 @@ router.get("/search", (req, res, next) => {
 router.get("/id/:id", async (req, res, next) => {
   const id = req.params.id;
   Pins.findByPk(id, {
-    include: { model: Users, required: true, attributes: ["username"] },
+    include: { model: Users, required: true, attributes: ["username", "name"] },
   })
     .then((pins) => {
       res.json(pins);

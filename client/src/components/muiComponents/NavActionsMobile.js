@@ -24,6 +24,7 @@ function NavActionsMobile({
   onAddNewPin,
   onAddNewLink,
   onAddNewComment,
+  showAdd,
 }) {
   const { darkMode, setDark } = useContext(themeContext);
   return (
@@ -40,17 +41,19 @@ function NavActionsMobile({
         horizontal: "left",
       }}
     >
-      <MenuItem
-        onClick={() => {
-          page === "home" && onAddNewPin();
-          page === "links" && onAddNewLink();
-          page === "pin" && onAddNewComment();
-          handleActionsClose();
-        }}
-        sx={{ display: "flex", justifyContent: "center" }}
-      >
-        <AddIcon />
-      </MenuItem>
+      {showAdd && (
+        <MenuItem
+          onClick={() => {
+            page === "home" && onAddNewPin();
+            page === "links" && onAddNewLink();
+            page === "pin" && onAddNewComment();
+            handleActionsClose();
+          }}
+          sx={{ display: "flex", justifyContent: "center" }}
+        >
+          <AddIcon />
+        </MenuItem>
+      )}
       <MenuItem onClick={() => setDark(!darkMode)}>
         {darkMode ? (
           <LightModeIcon style={styles.lightIcon} />

@@ -24,6 +24,7 @@ const useStyles = makeStyles({
 function Pin({ pin, onAlert, setUpdated }) {
   const classes = useStyles();
   const userObj = JSON.parse(sessionStorage.user);
+  const isAdmin = userObj.role === "Admin";
   const [showModal, setModal] = useState(false);
   const history = useHistory();
   const [loading, setLoading] = useState(false);
@@ -85,8 +86,10 @@ function Pin({ pin, onAlert, setUpdated }) {
             {pin.id}
           </Typography>
           <Typography variant="body2" align="left">
-            <span>Created By: @</span>
-            {pin.User.username}
+            <span>Created By: </span>
+            {pin?.User?.name?.length > 0
+              ? pin.User.name
+              : `@${pin.User.username}`}
           </Typography>
           <Typography variant="body2" align="left">
             <span>Date Created: </span>
@@ -97,7 +100,7 @@ function Pin({ pin, onAlert, setUpdated }) {
             {DateTimeConverter(pin.updatedAt)}
           </Typography>
 
-          {!showModal && userObj.id === pin.UserId && (
+          {!showModal && (userObj.id === pin.UserId || isAdmin) && (
             <Grid container direction="row" justifyContent="center">
               <Button
                 variant="contained"

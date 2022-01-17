@@ -50,7 +50,9 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
         avatar={
           <Avatar sx={{ bgcolor: "#adf" }}>
             <Typography variant="h5">
-              {userObj.username.charAt(0).toUpperCase()}
+              {userObj?.name?.length > 0
+                ? userObj.name.charAt(0).toUpperCase()
+                : userObj.username.charAt(0).toUpperCase()}
             </Typography>
           </Avatar>
         }
@@ -59,7 +61,9 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
             Add New Comment
           </Typography>
         }
-        subheader={`@${userObj.username}`}
+        subheader={
+          userObj?.name?.length > 0 ? userObj.name : `@${userObj.username}`
+        }
         sx={{ paddingTop: 1, paddingBottom: 1 }}
       />
       <CardContent

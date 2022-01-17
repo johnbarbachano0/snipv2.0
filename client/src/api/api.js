@@ -325,3 +325,19 @@ export function patchLinkById(data, linkId) {
     });
   return isUpdated;
 }
+
+//Get User History
+export function getHistory(searchVal, id) {
+  const url = `${process.env.REACT_APP_SERVER}/history/id/${id}?query=${searchVal}`;
+  const history = axios
+    .get(url, config)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((error) => {
+      if (error) {
+        window.location.href = `/error/${error.response.status}`;
+      }
+    });
+  return history;
+}

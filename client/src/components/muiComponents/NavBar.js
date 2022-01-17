@@ -35,6 +35,8 @@ function NavBar({
   const [searchVal, setSearchVal] = useState("");
   const [actionsAnchorEl, setActionsAnchorEl] = useState("");
   const [actionsOpen, setActionsOpen] = useState(false);
+  const showSearch = page === "home" || page === "links" || page === "history";
+  const showAdd = page === "home" || page === "links" || page === "pin";
 
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);
@@ -79,79 +81,83 @@ function NavBar({
             handleMenuClose={handleMenuClose}
           />
         </Grid>
-        <Grid item xs={isMobile ? 8 : 5} className={classes.searchBox}>
-          <TextField
-            className={classes.textSearch}
-            color="warning"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Tooltip title="Clear">
-                    <ClearRoundedIcon
-                      className={classes.deleteIcon}
-                      onClick={() => {
-                        setSearchVal("");
-                        onSearch("");
-                      }}
-                    />
-                  </Tooltip>
-                  <Tooltip title="Search">
-                    <SearchRoundedIcon
-                      className={classes.searchIcon}
-                      onClick={() =>
-                        searchVal.length > 0 && onSearch(searchVal)
-                      }
-                    />
-                  </Tooltip>
-                </InputAdornment>
-              ),
-            }}
-            hiddenLabel
-            placeholder="Search..."
-            size="small"
-            variant="filled"
-            disabled={
-              isLoading ||
-              page === "pin" ||
-              page === "about" ||
-              page === "profile"
-            }
-            value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
-            sx={{
-              display:
-                page === "pin" || page === "about" || page === "profile"
-                  ? "none"
-                  : "flex",
-            }}
-          />
-        </Grid>
+        {showSearch && (
+          <Grid item xs={isMobile ? 8 : 5} className={classes.searchBox}>
+            <TextField
+              className={classes.textSearch}
+              color="warning"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Tooltip title="Clear">
+                      <ClearRoundedIcon
+                        className={classes.deleteIcon}
+                        onClick={() => {
+                          setSearchVal("");
+                          onSearch("");
+                        }}
+                      />
+                    </Tooltip>
+                    <Tooltip title="Search">
+                      <SearchRoundedIcon
+                        className={classes.searchIcon}
+                        onClick={() =>
+                          searchVal.length > 0 && onSearch(searchVal)
+                        }
+                      />
+                    </Tooltip>
+                  </InputAdornment>
+                ),
+              }}
+              hiddenLabel
+              placeholder="Search..."
+              size="small"
+              variant="filled"
+              disabled={
+                isLoading ||
+                page === "pin" ||
+                page === "about" ||
+                page === "profile"
+              }
+              value={searchVal}
+              onChange={(e) => setSearchVal(e.target.value)}
+              sx={{
+                display:
+                  page === "pin" || page === "about" || page === "profile"
+                    ? "none"
+                    : "flex",
+              }}
+            />
+          </Grid>
+        )}
         <Grid item className={classes.actionBox}>
           <Grid container direction="row">
             {!isMobile && (
               <>
-                <Tooltip
-                  title={
-                    page === "home"
-                      ? "Add New Pin"
-                      : page === "links"
-                      ? "Add New Link"
-                      : page === "pin"
-                      ? "Add New Comment"
-                      : "Add New"
-                  }
-                  sx={{ marginLeft: 0.5, marginRight: 0.5 }}
-                >
-                  <Fab size="small" color="secondary">
-                    <AddIcon
-                      onClick={() => {
-                        page === "home" && onAddNewPin();
-                        page === "links" && onAddNewLink();
-                        page === "pin" && onAddNewComment();
-                      }}
-                    />
-                  </Fab>
-                </Tooltip>
+                {showAdd && (
+                  <Tooltip
+                    title={
+                      page === "home"
+                        ? "Add New Pin"
+                        : page === "links"
+                        ? "Add New Link"
+                        : page === "pin"
+                        ? "Add New Comment"
+                        : "Add New"
+                    }
+                    sx={{ marginLeft: 0.5, marginRight: 0.5 }}
+                  >
+                    <Fab size="small" color="secondary">
+                      <AddIcon
+                        onClick={() => {
+                          page === "home" && onAddNewPin();
+                          page === "links" && onAddNewLink();
+                          page === "pin" && onAddNewComment();
+                        }}
+                      />
+                    </Fab>
+                  </Tooltip>
+                )}
                 <Tooltip
                   title={darkMode ? "Lights on" : "Lights off"}
                   sx={{ marginLeft: 0.5, marginRight: 0.5 }}
@@ -188,6 +194,7 @@ function NavBar({
                   onAddNewPin={() => onAddNewPin()}
                   onAddNewLink={() => onAddNewLink()}
                   onAddNewComment={() => onAddNewComment()}
+                  showAdd={showAdd}
                 />
               </>
             )}

@@ -48,7 +48,7 @@ router.get("/page/:offset", (req, res, next) => {
   const offset = (page - 1) * 10;
   Links.findAndCountAll({
     where: { status: true },
-    include: { model: Users, required: true, attributes: ["username"] },
+    include: { model: Users, required: true, attributes: ["username", "name"] },
     limit: 10,
     offset: offset,
   })
@@ -72,7 +72,7 @@ router.get("/page/:offset", (req, res, next) => {
 router.get("/id/:id", async (req, res, next) => {
   const id = req.params.id;
   Links.findByPk(id, {
-    include: { model: Users, required: true, attributes: ["username"] },
+    include: { model: Users, required: true, attributes: ["username", "name"] },
   })
     .then((link) => {
       res.json(link);
