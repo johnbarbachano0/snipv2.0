@@ -35,9 +35,25 @@ router.get("/id/:id", (req, res, next) => {
           UserId: isAdmin ? { [Op.like]: `%%` } : userId,
         },
         order: [["createdAt", "DESC"]],
-      }).then((result) => {
-        console.log(result);
-        res.json(result);
+      }).then(async (results) => {
+        const newResults = await results.map((result) => {
+          var procResult = result.dataValues;
+          if (result.dataValues.prevValue?.hash) {
+            procResult = {
+              ...procResult,
+              prevValue: { ...procResult.prevValue, hash: "****" },
+            };
+          }
+          if (result.dataValues.newValue?.hash) {
+            procResult = {
+              ...procResult,
+              newValue: { ...procResult.newValue, hash: "****" },
+            };
+            return procResult;
+          }
+          return procResult;
+        });
+        res.json(newResults);
       });
     })
     .catch((error) => next(error));

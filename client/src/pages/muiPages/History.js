@@ -22,7 +22,7 @@ function History() {
   const [history, setHistory] = useState([]);
   const [alert, setAlert] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-
+  const [exportToggle, setExportToggle] = useState(false);
   useEffect(() => {
     setLoading(true);
     handleSearch("");
@@ -56,6 +56,10 @@ function History() {
     setShowAlert(true);
   }
 
+  function handleExport() {
+    setExportToggle((prev) => !prev);
+  }
+
   return (
     <>
       <NavBar
@@ -64,11 +68,11 @@ function History() {
         onSearch={(searchVal) => {
           handleSearch(searchVal);
         }}
+        onExport={handleExport}
       />
       <Box sx={styles.container}>
-        <DataTable loading={loading} rows={history} />
+        <DataTable loading={loading} rows={history} onExport={exportToggle} />
       </Box>
-
       {showAlert && (
         <Alerts
           type={alert.type}

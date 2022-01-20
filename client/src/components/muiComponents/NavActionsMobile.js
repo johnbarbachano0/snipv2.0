@@ -4,6 +4,7 @@ import { Menu, MenuItem } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import DownloadIcon from "@mui/icons-material/DownloadRounded";
 
 const styles = {
   darkIcon: {
@@ -25,6 +26,7 @@ function NavActionsMobile({
   onAddNewLink,
   onAddNewComment,
   showAdd,
+  onExport,
 }) {
   const { darkMode, setDark } = useContext(themeContext);
   return (
@@ -47,11 +49,12 @@ function NavActionsMobile({
             page === "home" && onAddNewPin();
             page === "links" && onAddNewLink();
             page === "pin" && onAddNewComment();
+            page === "history" && onExport();
             handleActionsClose();
           }}
           sx={{ display: "flex", justifyContent: "center" }}
         >
-          <AddIcon />
+          {page === "history" ? <DownloadIcon /> : <AddIcon />}
         </MenuItem>
       )}
       <MenuItem onClick={() => setDark(!darkMode)}>

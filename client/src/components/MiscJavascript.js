@@ -50,6 +50,11 @@ export function DateConverter(ISOdate) {
   return dateFormat;
 }
 
+export function TimeConverter(ISOdate) {
+  const timeFormat = new Date(ISOdate).toLocaleTimeString();
+  return timeFormat;
+}
+
 export function getLoginImage() {
   const x = Math.floor(Math.random() * 10 + 1);
   const image = require(`../images/login/${x}.jpg`);
@@ -70,4 +75,8 @@ export function getLogoutImage() {
 
 export function removeSpace(value) {
   return value.replace(/\s/g, "");
+}
+
+export function Capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }

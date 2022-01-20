@@ -13,6 +13,7 @@ import {
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import AddIcon from "@mui/icons-material/Add";
+import DownloadIcon from "@mui/icons-material/DownloadRounded";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
@@ -27,6 +28,7 @@ function NavBar({
   onAddNewLink,
   onAddNewComment,
   onSearch,
+  onExport,
 }) {
   const classes = useStyles();
   const { darkMode, setDark, isMobile } = useContext(themeContext);
@@ -36,7 +38,8 @@ function NavBar({
   const [actionsAnchorEl, setActionsAnchorEl] = useState("");
   const [actionsOpen, setActionsOpen] = useState(false);
   const showSearch = page === "home" || page === "links" || page === "history";
-  const showAdd = page === "home" || page === "links" || page === "pin";
+  const showAdd =
+    page === "home" || page === "links" || page === "pin" || page === "history";
 
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);
@@ -139,6 +142,8 @@ function NavBar({
                     title={
                       page === "home"
                         ? "Add New Pin"
+                        : page === "history"
+                        ? "Export CSV"
                         : page === "links"
                         ? "Add New Link"
                         : page === "pin"
@@ -147,14 +152,17 @@ function NavBar({
                     }
                     sx={{ marginLeft: 0.5, marginRight: 0.5 }}
                   >
-                    <Fab size="small" color="secondary">
-                      <AddIcon
-                        onClick={() => {
-                          page === "home" && onAddNewPin();
-                          page === "links" && onAddNewLink();
-                          page === "pin" && onAddNewComment();
-                        }}
-                      />
+                    <Fab
+                      size="small"
+                      color="secondary"
+                      onClick={() => {
+                        page === "home" && onAddNewPin();
+                        page === "links" && onAddNewLink();
+                        page === "pin" && onAddNewComment();
+                        page === "history" && onExport();
+                      }}
+                    >
+                      {page === "history" ? <DownloadIcon /> : <AddIcon />}
                     </Fab>
                   </Tooltip>
                 )}
@@ -194,6 +202,7 @@ function NavBar({
                   onAddNewPin={() => onAddNewPin()}
                   onAddNewLink={() => onAddNewLink()}
                   onAddNewComment={() => onAddNewComment()}
+                  onExport={() => onExport()}
                   showAdd={showAdd}
                 />
               </>
