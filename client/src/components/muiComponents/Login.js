@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../schema/loginSchema";
@@ -26,6 +26,7 @@ function Login() {
   const [uname, setUname] = useState("");
   const [pword, setPword] = useState("");
   const [loading, setLoading] = useState(false);
+  const submitEl = useRef(null);
   const {
     register,
     handleSubmit,
@@ -35,13 +36,18 @@ function Login() {
   });
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setErrorMsg("");
-    }, 3000);
-    return () => {
-      clearTimeout(timer);
-    };
+    const timer = setTimeout(() => setErrorMsg(""), 3000);
+    return () => clearTimeout(timer);
   }, [errorMsg]);
+
+  useEffect(() => {
+    const unsubscribe = window.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+  }, []);
+
+  function handleKeyPress(event) {
+    event.key === "Enter" && submitEl?.current?.focus()?.click();
+  }
 
   function onSubmit(data) {
     setLoading(true);
@@ -140,6 +146,7 @@ function Login() {
         variant="contained"
         fullWidth={true}
         sx={{ marginTop: 1, padding: 1.5, borderRadius: 3 }}
+        ref={submitEl}
       >
         Submit
       </LoadingButton>
