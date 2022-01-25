@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Alerts from "../../components/muiComponents/Alerts";
-import { Box } from "@mui/system";
-import { getHistory } from "../../api/api";
+import { Box } from "@mui/material";
+import { getUsers } from "../../api/api";
 import Loading from "../../components/Loading";
 import MainTable from "../../components/muiComponents/MainTable/MainTable";
 import NavBar from "../../components/muiComponents/NavBar";
 import ScrollToTop from "../../components/muiComponents/ScrollToTop";
-import useHistoryTable from "../../components/muiComponents/MainTable/useHistoryTable";
-import { Capitalize } from "../../components/MiscJavascript";
+import {
+  Capitalize,
+  CapitalizeFirstLetters,
+} from "../../components/MiscJavascript";
+import useAccessTable from "../../components/muiComponents/MainTable/useAccessTable";
+
 const styles = {
   container: {
     margin: "auto",
@@ -16,21 +20,22 @@ const styles = {
   },
 };
 
-function History() {
-  const { columns } = useHistoryTable();
-  const page = "history";
+function Access() {
+  const { columns, newData, isSuccess } = useAccessTable();
+  const page = "access";
   const userObj = JSON.parse(sessionStorage.user);
   const [loading, setLoading] = useState(true);
-  const [history, setHistory] = useState([]);
+  const [users, setUsers] = useState([]);
   const [alert, setAlert] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [exportToggle, setExportToggle] = useState(false);
   const [pdfToggle, setPdfToggle] = useState(false);
+  const searchValue = useRef("");
 
   useEffect(() => {
-    const search = handleSearch("");
+    const search = handleSearch(searchValue.current);
     return search;
-  }, []); // eslint-disable-line
+  }, [isSuccess && newData]); // eslint-disable-line
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -42,22 +47,25 @@ function History() {
   }, [showAlert]);
 
   function handleSearch(searchVal) {
+    searchValue.current = searchVal;
     setLoading(true);
-    getHistory(searchVal, userObj.id)
+    getUsers(searchVal, userObj.id)
       .then((results) => {
         const procResults = results.map((result) => {
           const processed = {
             ...result,
-            username: result.User.username,
+            provider: Capitalize(result.provider),
+            name:
+              result?.name === null ? "" : CapitalizeFirstLetters(result.name),
           };
           return processed;
         });
-        setHistory(procResults);
+        setUsers(procResults);
         handleAlert("success", `Displaying ${results.length} result/s.`);
         setLoading(false);
       })
       .catch((error) => {
-        handleAlert("error", "Getting history failed.");
+        handleAlert("error", "Getting users failed.");
         setLoading(false);
       });
   }
@@ -86,18 +94,22 @@ function History() {
         onExport={handleExport}
         onPdf={handlePdf}
       />
-      {!loading && (
-        <Box sx={styles.container}>
-          <MainTable
-            loading={loading}
-            rows={history}
-            columns={columns}
-            onExport={exportToggle}
-            onPdf={pdfToggle}
-            filename={Capitalize(page)}
-          />
+      {loading && (
+        <Box className="center">
+          <Loading type="cubes" color="#1DB9C3" height="10rem" width="10rem" />
         </Box>
       )}
+
+      <Box sx={styles.container}>
+        <MainTable
+          loading={loading}
+          rows={users}
+          columns={columns}
+          onExport={exportToggle}
+          onPdf={pdfToggle}
+          filename={Capitalize(page)}
+        />
+      </Box>
       {showAlert && (
         <Alerts
           type={alert.type}
@@ -105,14 +117,9 @@ function History() {
           closeAlert={() => setShowAlert(false)}
         />
       )}
-      {loading && (
-        <Box className="center">
-          <Loading type="cubes" color="#1DB9C3" height="10rem" width="10rem" />
-        </Box>
-      )}
       <ScrollToTop />
     </>
   );
 }
 
-export default History;
+export default Access;

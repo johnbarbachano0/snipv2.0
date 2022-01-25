@@ -17,6 +17,7 @@ import DownloadIcon from "@mui/icons-material/DownloadRounded";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import PdfIcon from "@mui/icons-material/PictureAsPdfRounded";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AppMenu from "./AppMenu";
 import NavActionsMobile from "./NavActionsMobile";
@@ -29,6 +30,7 @@ function NavBar({
   onAddNewComment,
   onSearch,
   onExport,
+  onPdf,
 }) {
   const classes = useStyles();
   const { darkMode, setDark, isMobile } = useContext(themeContext);
@@ -37,9 +39,14 @@ function NavBar({
   const [searchVal, setSearchVal] = useState("");
   const [actionsAnchorEl, setActionsAnchorEl] = useState("");
   const [actionsOpen, setActionsOpen] = useState(false);
-  const showSearch = page === "home" || page === "links" || page === "history";
-  const showAdd =
-    page === "home" || page === "links" || page === "pin" || page === "history";
+  const showSearch =
+    page === "home" ||
+    page === "links" ||
+    page === "history" ||
+    page === "access";
+  const showAdd = page === "home" || page === "links" || page === "pin";
+  const showExport = page === "history" || page === "access";
+  const showPdf = page === "history" || page === "access";
 
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);
@@ -142,8 +149,6 @@ function NavBar({
                     title={
                       page === "home"
                         ? "Add New Pin"
-                        : page === "history"
-                        ? "Export CSV"
                         : page === "links"
                         ? "Add New Link"
                         : page === "pin"
@@ -152,18 +157,54 @@ function NavBar({
                     }
                     sx={{ marginLeft: 0.5, marginRight: 0.5 }}
                   >
-                    <Fab
-                      size="small"
-                      color="secondary"
-                      onClick={() => {
-                        page === "home" && onAddNewPin();
-                        page === "links" && onAddNewLink();
-                        page === "pin" && onAddNewComment();
-                        page === "history" && onExport();
-                      }}
-                    >
-                      {page === "history" ? <DownloadIcon /> : <AddIcon />}
-                    </Fab>
+                    <span>
+                      <Fab
+                        size="small"
+                        color="secondary"
+                        onClick={() => {
+                          page === "home" && onAddNewPin();
+                          page === "links" && onAddNewLink();
+                          page === "pin" && onAddNewComment();
+                        }}
+                        disabled={isLoading}
+                      >
+                        <AddIcon />
+                      </Fab>
+                    </span>
+                  </Tooltip>
+                )}
+                {showExport && (
+                  <Tooltip
+                    title={"Export to CSV"}
+                    sx={{ marginLeft: 0.5, marginRight: 0.5 }}
+                  >
+                    <span>
+                      <Fab
+                        size="small"
+                        color="secondary"
+                        onClick={() => onExport()}
+                        disabled={isLoading}
+                      >
+                        <DownloadIcon />
+                      </Fab>
+                    </span>
+                  </Tooltip>
+                )}
+                {showPdf && (
+                  <Tooltip
+                    title={"Export to PDF"}
+                    sx={{ marginLeft: 0.5, marginRight: 0.5 }}
+                  >
+                    <span>
+                      <Fab
+                        size="small"
+                        color="secondary"
+                        onClick={() => onPdf()}
+                        disabled={isLoading}
+                      >
+                        <PdfIcon />
+                      </Fab>{" "}
+                    </span>
                   </Tooltip>
                 )}
                 <Tooltip
@@ -204,6 +245,10 @@ function NavBar({
                   onAddNewComment={() => onAddNewComment()}
                   onExport={() => onExport()}
                   showAdd={showAdd}
+                  showExport={showExport}
+                  onPdf={() => onPdf()}
+                  showPdf={showPdf}
+                  isLoading={isLoading}
                 />
               </>
             )}

@@ -12,7 +12,11 @@ export const registerSchema = yup.object().shape({
       async (username) => {
         if (username) {
           const res = await isUsernameAvailable(username);
-          return res;
+          if (res === "available") {
+            return true;
+          } else {
+            return false;
+          }
         }
       }
     ),
@@ -51,9 +55,27 @@ export const loginSchema = yup.object().shape({
     .test("is-username-exist", "Username does not exist.", async (username) => {
       if (username) {
         const res = await isUsernameAvailable(username);
-        return !res;
+        if (res === "available") {
+          return false;
+        } else {
+          return true;
+        }
       }
-    }),
+    })
+    .test(
+      "is-username-invalid",
+      "Inactive account. Contact Admin.",
+      async (username) => {
+        if (username) {
+          const res = await isUsernameAvailable(username);
+          if (res === "inactive") {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }
+    ),
   password: yup
     .string()
     .required("Password is required.")

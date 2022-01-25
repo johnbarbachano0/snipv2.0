@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../../components/muiComponents/NavBar";
-import { DateTimeConverter } from "../../components/MiscJavascript";
+import {
+  Capitalize,
+  CapitalizeFirstLetters,
+  DateTimeConverter,
+} from "../../components/MiscJavascript";
 import {
   Box,
   Avatar,
@@ -18,7 +22,6 @@ function Profile() {
   const page = "profile";
   const userObj = JSON.parse(sessionStorage.user);
   const [loginImage, setLoginImage] = useState("");
-
   useEffect(() => {
     const image = getHelloImage();
     setLoginImage(image);
@@ -41,11 +44,19 @@ function Profile() {
             avatar={
               <Avatar sx={{ bgcolor: "red" }}>
                 <Typography variant="h5">
-                  {userObj.username.charAt(0).toUpperCase()}
+                  {userObj.provider === "snip" || userObj.name === null
+                    ? userObj.username.charAt(0).toUpperCase()
+                    : userObj.name.charAt(0).toUpperCase()}
                 </Typography>
               </Avatar>
             }
-            title={<Typography variant="h5">@{userObj.username}</Typography>}
+            title={
+              <Typography variant="h5">
+                {userObj.provider === "snip" || userObj.name === null
+                  ? `@${userObj.username}`
+                  : CapitalizeFirstLetters(userObj.name)}
+              </Typography>
+            }
             subheader={
               <Typography>
                 <span
@@ -59,13 +70,37 @@ function Profile() {
           />
           <CardContent>
             <Typography variant="body2">
-              <span style={{ ...common }}>User Id: </span>
+              <span style={{ ...common }}>Snip Id: </span>
               {userObj.id}
             </Typography>
             <Typography variant="body2">
-              <span style={{ ...common }}>User Role: </span>
+              <span style={{ ...common }}>Role: </span>
               {userObj.role}
             </Typography>
+            <Typography variant="body2">
+              <span style={{ ...common }}>Login Provider: </span>
+              {Capitalize(userObj.provider)}
+            </Typography>
+            {userObj?.email && (
+              <Typography variant="body2">
+                <span style={{ ...common }}>Email: </span>
+                {userObj?.email}
+              </Typography>
+            )}
+            {userObj?.username && userObj?.provider === "snip" && (
+              <Typography variant="body2">
+                <span style={{ ...common }}>Username: </span>
+                {userObj?.username}
+              </Typography>
+            )}
+            {userObj?.socialId && userObj?.provider !== "snip" && (
+              <Typography variant="body2">
+                <span style={{ ...common }}>
+                  {Capitalize(userObj.provider)} Id:{" "}
+                </span>
+                {userObj?.socialId}
+              </Typography>
+            )}
             <Typography variant="body2">
               <span style={{ ...common }}>Last Login: </span>
               {DateTimeConverter(userObj.lastLogin)}
@@ -73,6 +108,10 @@ function Profile() {
             <Typography variant="body2">
               <span style={{ ...common }}>Date Created: </span>
               {DateTimeConverter(userObj.createdAt)}
+            </Typography>
+            <Typography variant="body2">
+              <span style={{ ...common }}>Date Updated: </span>
+              {DateTimeConverter(userObj.updatedAt)}
             </Typography>
           </CardContent>
         </Card>

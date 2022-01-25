@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import AssignmentIndRoundedIcon from "@mui/icons-material/AssignmentIndRounded";
 import HistoryIcon from "@mui/icons-material/History";
+import AccountIcon from "@mui/icons-material/AccountCircleRounded";
 import InfoIcon from "@mui/icons-material/Info";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
@@ -48,6 +49,15 @@ function AppMenu({ page, anchorEl, menuOpen, handleMenuClose }) {
         >
           <AssignmentIndRoundedIcon />
           Profile
+        </MenuItem>
+      )}
+      {page !== "access" && userObj.role === "Admin" && (
+        <MenuItem
+          sx={{ ...style.item }}
+          onClick={() => history.push("/access")}
+        >
+          <AccountIcon />
+          Access
         </MenuItem>
       )}
       {page !== "history" && (

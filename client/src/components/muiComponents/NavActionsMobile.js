@@ -5,6 +5,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DownloadIcon from "@mui/icons-material/DownloadRounded";
+import PdfIcon from "@mui/icons-material/PictureAsPdfRounded";
 
 const styles = {
   darkIcon: {
@@ -27,6 +28,10 @@ function NavActionsMobile({
   onAddNewComment,
   showAdd,
   onExport,
+  showExport,
+  onPdf,
+  showPdf,
+  isLoading,
 }) {
   const { darkMode, setDark } = useContext(themeContext);
   return (
@@ -49,12 +54,36 @@ function NavActionsMobile({
             page === "home" && onAddNewPin();
             page === "links" && onAddNewLink();
             page === "pin" && onAddNewComment();
-            page === "history" && onExport();
+            handleActionsClose();
+          }}
+          disabled={isLoading}
+          sx={{ display: "flex", justifyContent: "center" }}
+        >
+          <AddIcon />
+        </MenuItem>
+      )}
+      {showExport && (
+        <MenuItem
+          onClick={() => {
+            onExport();
             handleActionsClose();
           }}
           sx={{ display: "flex", justifyContent: "center" }}
+          disabled={isLoading}
         >
-          {page === "history" ? <DownloadIcon /> : <AddIcon />}
+          <DownloadIcon />
+        </MenuItem>
+      )}
+      {showPdf && (
+        <MenuItem
+          onClick={() => {
+            onPdf();
+            handleActionsClose();
+          }}
+          sx={{ display: "flex", justifyContent: "center" }}
+          disabled={isLoading}
+        >
+          <PdfIcon />
         </MenuItem>
       )}
       <MenuItem onClick={() => setDark(!darkMode)}>

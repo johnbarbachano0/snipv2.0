@@ -52,9 +52,11 @@ const keyValidator = (key, value, dataObj) => {
       ? value?.substring(0, 40) + "..."
       : "<blank>"
     : key === "status"
-    ? value === "true"
+    ? value === true
       ? "Active"
       : "Inactive"
+    : key === "provider" && value !== null
+    ? Capitalize(value)
     : key === "createdAt" || key === "updatedAt" || key === "lastLogin"
     ? DateTimeConverter(value)
     : value === null

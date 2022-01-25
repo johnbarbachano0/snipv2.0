@@ -19,16 +19,10 @@ export function isUsernameAvailable(username) {
     const isAuth = axios
       .get(url, config)
       .then((res) => {
-        if (res?.data === null) {
-          return true;
-        } else {
-          return false;
-        }
+        return res.data.message;
       })
       .catch((error) => {
-        if (error) {
-          window.location.href = `/error/${error.response.status}`;
-        }
+        window.location.href = `/error/500`;
       });
     return isAuth;
   }
@@ -43,9 +37,7 @@ export function postNewUser(data) {
       return res.data;
     })
     .catch((error) => {
-      if (error.response) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return createdUser;
 }
@@ -70,9 +62,7 @@ export function authenticateUser(data) {
       }
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return authUser;
 }
@@ -90,9 +80,7 @@ export function logoutUser(userId) {
       }
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
 }
 
@@ -106,9 +94,7 @@ export function logoutUser(userId) {
 //       return res.data;
 //     })
 //     .catch((error) => {
-//       if (error) {
-//         window.location.href = `/error/${error.response.status}`;
-//       }
+//       window.location.href = `/error/500`;
 //     });
 //   return pins;
 // }
@@ -122,9 +108,7 @@ export function getSearchPins(searchVal) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return pins;
 }
@@ -138,9 +122,7 @@ export function getPinById(id) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return pins;
 }
@@ -154,9 +136,7 @@ export function postNewPin(data) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return newPin;
 }
@@ -171,9 +151,7 @@ export function deletePinById(id) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return isDeleted;
 }
@@ -188,9 +166,7 @@ export function patchPin(data) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return isUpdated;
 }
@@ -204,9 +180,7 @@ export function getCommentByPinId(id) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return comment;
 }
@@ -220,9 +194,7 @@ export function postCommentByPinId(data) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return comment;
 }
@@ -236,9 +208,7 @@ export function getAllLinks(no) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return links;
 }
@@ -252,9 +222,7 @@ export function getLinks(searchVal) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return links;
 }
@@ -268,9 +236,7 @@ export function postNewLink(data) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return links;
 }
@@ -285,9 +251,7 @@ export function deleteByLinkId(data) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return isDeleted;
 }
@@ -302,9 +266,7 @@ export function bulkDeleteByLinkIds(data) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return isBulkDeleted;
 }
@@ -319,9 +281,7 @@ export function patchLinkById(data, linkId) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return isUpdated;
 }
@@ -335,9 +295,35 @@ export function getHistory(searchVal, id) {
       return res.data;
     })
     .catch((error) => {
-      if (error) {
-        window.location.href = `/error/${error.response.status}`;
-      }
+      window.location.href = `/error/500`;
     });
   return history;
+}
+
+//Get Users
+export function getUsers(searchVal, id) {
+  const url = `${process.env.REACT_APP_SERVER}/auth/users?query=${searchVal}`;
+  const users = axios
+    .get(url, config)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((error) => {
+      window.location.href = `/error/500`;
+    });
+  return users;
+}
+
+//Patch Users
+export function patchUsers(data) {
+  const url = `${process.env.REACT_APP_SERVER}/auth/users/${data.id}`;
+  const users = axios
+    .patch(url, { data: data })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((error) => {
+      window.location.href = `/error/500`;
+    });
+  return users;
 }

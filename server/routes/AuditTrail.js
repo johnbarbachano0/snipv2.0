@@ -31,6 +31,8 @@ router.get("/id/:id", (req, res, next) => {
             { newValue: queryObj },
             { error: queryObj },
             { "$User.username$": queryObj },
+            { createdAt: queryObj },
+            { updatedAt: queryObj },
           ],
           UserId: isAdmin ? { [Op.like]: `%%` } : userId,
         },

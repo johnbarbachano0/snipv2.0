@@ -67,7 +67,7 @@ function About() {
             <Box>NodeJS</Box>
           </Grid>
         </Grid>
-        <span style={{ fontStyle: "italic" }}>~and~</span>
+        <span style={{ fontStyle: "italic" }}> & </span>
         <Box>
           <SiMaterialui style={{ fontSize: 70 }} />
           <Box>Material UI</Box>

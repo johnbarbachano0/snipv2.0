@@ -4,9 +4,9 @@ import CardBody from "../../components/muiComponents/CardBody";
 import AddNewPin from "../../components/muiComponents/AddNewPin";
 import Alerts from "../../components/muiComponents/Alerts";
 import ScrollToTop from "../../components/muiComponents/ScrollToTop";
-import Loading from "../../components/Loading";
 import { getSearchPins } from "../../api/api";
-import { Grid, Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
+import PinSkeleton from "../../components/muiComponents/PinSkeleton";
 
 function Homepage() {
   const page = "home";
@@ -46,7 +46,6 @@ function Homepage() {
   }
 
   useEffect(() => {
-    setLoading(true);
     handleSearch("");
     sessionStorage.alert &&
       (() => {
@@ -69,31 +68,33 @@ function Homepage() {
           handleSearch(searchVal);
         }}
       />
-      <Box margin={5} marginTop={8}>
-        <Grid
-          container
-          direction="row"
-          justifyContent="space-evenly"
-          alignItems="stretch"
-          spacing={2}
-        >
-          {listOfPins &&
-            listOfPins.map((pin) => {
-              return (
-                <Grid item xs={12} sm={6} md={4} xl={3} key={pin.id}>
-                  <CardBody
-                    id={pin.id}
-                    title={pin.title}
-                    desc={pin.description}
-                    username={pin.User.username}
-                    name={pin.User.name}
-                  />
-                </Grid>
-              );
-            })}
-        </Grid>{" "}
-      </Box>
-
+      {isLoading && <PinSkeleton />}
+      {!isLoading && listOfPins.length > 0 && (
+        <Box margin={5} marginTop={8}>
+          <Grid
+            container
+            direction="row"
+            justifyContent="space-evenly"
+            alignItems="stretch"
+            spacing={2}
+          >
+            {listOfPins &&
+              listOfPins.map((pin) => {
+                return (
+                  <Grid item xs={12} sm={6} md={4} xl={3} key={pin.id}>
+                    <CardBody
+                      id={pin.id}
+                      title={pin.title}
+                      desc={pin.description}
+                      username={pin.User.username}
+                      name={pin.User.name}
+                    />
+                  </Grid>
+                );
+              })}
+          </Grid>
+        </Box>
+      )}
       {showAlert && (
         <Alerts
           type={alert.type}
@@ -113,11 +114,6 @@ function Homepage() {
           }}
           openModal={showAddNewPin}
         />
-      )}
-      {isLoading && (
-        <div className="center">
-          <Loading type="cylon" color="#1DB9C3" height="10rem" width="10rem" />
-        </div>
       )}
       <ScrollToTop />
     </>

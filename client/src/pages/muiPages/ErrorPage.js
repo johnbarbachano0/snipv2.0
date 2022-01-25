@@ -64,7 +64,7 @@ function ErrorPage() {
         {errType === "500" ? (
           <>
             <div style={style.error500}>500</div>
-            <div style={style.errorText}>Server Error</div>
+            <div style={style.errorText}>Error</div>
             <div style={style.errorMessage}>
               Things are a little unstable here. I suggest come back later.
             </div>

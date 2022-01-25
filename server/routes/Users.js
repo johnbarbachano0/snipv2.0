@@ -8,13 +8,21 @@ const {
   createResponse,
   createTrail,
 } = require("../middlewares/miscjs");
+const { Op } = require("sequelize");
 
 //Check if username is already available in user table
 router.get("/username/:username", (req, res, next) => {
   const username = req.params.username;
   Users.findOne({ where: { username: username } })
-    .then((user) => {
-      res.json(user);
+    .then((response) => {
+      const user = response?.dataValues || [];
+      if (user && user?.status === true) {
+        res.json({ status: false, message: "existing" });
+      } else if (user && user?.status === false) {
+        res.json({ status: false, message: "inactive" });
+      } else {
+        res.json({ status: true, message: "available" });
+      }
     })
     .catch((error) => {
       createTrail(
@@ -42,6 +50,7 @@ router.post("/register", (req, res, next) => {
           username: newUser.username,
           hash: await hash,
           lastLogin: "1990-01-01 00:00:00",
+          provider: "local",
         };
         Users.create(postUser)
           .then((user) => {
@@ -249,6 +258,76 @@ router.get("/logout/:userId", (req, res, next) => {
       error.message
     );
   }
+});
+
+//Get All Users
+router.get("/users", (req, res, next) => {
+  const { query } = req.query;
+  const queryObj = {
+    [Op.like]: `%${query}%`,
+  };
+  Users.findAll({
+    where: {
+      [Op.or]: [
+        { username: queryObj },
+        { provider: queryObj },
+        { role: queryObj },
+        { email: queryObj },
+        { status: queryObj },
+      ],
+    },
+    order: [["createdAt", "DESC"]],
+  })
+    .then((users) => {
+      const newUsers = users.map((user) => {
+        return { ...user.dataValues, hash: "****" };
+      });
+      res.json(newUsers);
+    })
+    .catch((error) => {
+      createTrail(
+        "Get All Users",
+        "Error during get all users",
+        null,
+        null,
+        req.user.id,
+        error.message
+      );
+      next(error);
+    });
+});
+
+//Update User (this include delete=disable access)
+router.patch("/users/:id", (req, res, next) => {
+  Users.findByPk(req.params.id).then((prevValue) => {
+    const userId = prevValue.id;
+    Users.update(req.body.data, { where: { id: req.params.id } })
+      .then((response) => {
+        return Users.findOne({ where: { id: req.params.id } });
+      })
+      .then((newValue) => {
+        createTrail(
+          "Update User",
+          "Update success",
+          prevValue,
+          newValue,
+          userId,
+          null
+        );
+        res.send(true);
+      })
+      .catch((error) => {
+        createTrail(
+          "Update User",
+          "Error during user update",
+          prevValue,
+          req.body.data,
+          userId,
+          error.message
+        );
+        res.send(false);
+      });
+  });
 });
 
 module.exports = router;

@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useHistory } from "react-router-dom";
 import { themeContext } from "./ThemeContext";
+import { CapitalizeFirstLetters } from "../MiscJavascript";
 
 const useStyles = makeStyles({
   cardContent: {
@@ -46,15 +47,17 @@ function CardBody({ id, title, desc, username, name }) {
         title={
           <Typography variant="h6" sx={{ maxHeight: 65 }}>
             {expanded
-              ? title.length > 61
+              ? title.length > 50
                 ? title.substr(0, 50) + "..."
                 : title
-              : title.length > 26
+              : title.length > 25
               ? title.substr(0, 25) + "..."
               : title}
           </Typography>
         }
-        subheader={name?.length > 0 ? `${name}` : `@${username}`}
+        subheader={
+          name?.length > 0 ? `${CapitalizeFirstLetters(name)}` : `@${username}`
+        }
         sx={{
           bgcolor: darkMode ? "#02475E" : "#8AB6D6",
           paddingBottom: 0.5,

@@ -22,6 +22,7 @@ router.get("/search", (req, res, next) => {
         { title: queryObj },
         { description: queryObj },
         { "$User.username$": queryObj },
+        { "$User.name$": queryObj },
       ],
       status: true,
     },
