@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { patchLinkById } from "../../api/api";
@@ -67,6 +67,8 @@ function EditLink({ openModal, onEditLink, onEditCancel, linkData }) {
   ]);
   const classes = useStyles();
   const userObj = JSON.parse(sessionStorage.user);
+  const submitEl = useRef(null);
+  const cancelEl = useRef(null);
   const {
     register,
     handleSubmit,
@@ -75,6 +77,16 @@ function EditLink({ openModal, onEditLink, onEditCancel, linkData }) {
     resolver: yupResolver(addNewLinkSchema),
   });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = document.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+  }, []);
+
+  function handleKeyPress(event) {
+    event.key === "Enter" && submitEl?.current?.focus()?.click();
+    event.key === "Escape" && cancelEl?.current?.focus()?.click();
+  }
 
   function onSubmit(data) {
     const dataObj = data;
@@ -132,13 +144,13 @@ function EditLink({ openModal, onEditLink, onEditCancel, linkData }) {
               value={getValue("title")}
               onChange={handleChange}
               placeholder="Title..."
-              required
               autoComplete="off"
               fullWidth={true}
               inputProps={{
                 maxLength: 100,
               }}
               InputProps={{ style: { fontSize: 14 } }}
+              required
               error={errors.title ? true : false}
             />
             {errors.title && (
@@ -247,6 +259,7 @@ function EditLink({ openModal, onEditLink, onEditCancel, linkData }) {
               loading={loading}
               variant="contained"
               sx={{ margin: 1, width: "25%" }}
+              ref={submitEl}
             >
               Save
             </LoadingButton>
@@ -257,6 +270,7 @@ function EditLink({ openModal, onEditLink, onEditCancel, linkData }) {
                 onEditCancel();
               }}
               sx={{ margin: 1, width: "25%" }}
+              ref={cancelEl}
             >
               Cancel
             </Button>

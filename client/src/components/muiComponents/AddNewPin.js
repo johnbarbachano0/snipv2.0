@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { themeContext } from "./ThemeContext";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -50,8 +50,20 @@ function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
   } = useForm({
     resolver: yupResolver(addNewPinSchema),
   });
+  const submitEl = useRef(null);
+  const cancelEl = useRef(null);
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = window.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+  }, []);
+
+  function handleKeyPress(event) {
+    event.key === "Enter" && submitEl?.current?.focus()?.click();
+    event.key === "Escape" && cancelEl?.current?.focus()?.click();
+  }
 
   function onSubmit(data) {
     setLoading(true);
@@ -87,6 +99,7 @@ function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
               {...register("title")}
               placeholder="Title..."
               required
+              autoFocus
               autoComplete="off"
               fullWidth={true}
               inputProps={{
@@ -132,11 +145,14 @@ function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
 
           <Grid item className={classes.gridItem}>
             <LoadingButton
+              id="submitBtn"
+              name="submitBtn"
               onClick={handleSubmit(onSubmit)}
               color="primary"
               loading={loading}
               variant="contained"
               sx={{ margin: 1 }}
+              ref={submitEl}
             >
               Submit
             </LoadingButton>
@@ -147,6 +163,7 @@ function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
                 onAddNewCancel();
               }}
               sx={{ margin: 1 }}
+              ref={cancelEl}
             >
               Cancel
             </Button>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useForm } from "react-hook-form";
@@ -12,14 +12,27 @@ function EditPin({ pin, setModal, onAlert, setUpdated }) {
     { description: pin.description },
   ]);
   const [loading, setLoading] = useState(false);
+  const submitEl = useRef(null);
+  const cancelEl = useRef(null);
 
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm({
     resolver: yupResolver(addNewPinSchema),
   });
+
+  useEffect(() => {
+    const unsubscribe = document.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleKeyPress(event) {
+    event.key === "Enter" && submitEl?.current?.focus()?.click();
+    event.key === "Escape" && setModal();
+  }
 
   function handleChange(e) {
     var { name, value } = e.target;
@@ -41,18 +54,25 @@ function EditPin({ pin, setModal, onAlert, setUpdated }) {
 
   function onSubmit(data) {
     setLoading(true);
-    const response = patchPin(data);
-    response.then((res) => {
-      if (res) {
-        onAlert("success", "Updated pin successfully!");
+    isDirty &&
+      patchPin(data).then((res) => {
+        if (res) {
+          onAlert("success", "Updated pin successfully!");
+          setModal();
+          setUpdated();
+          setLoading(false);
+        } else {
+          onAlert("error", "Pin update has failed.");
+          setLoading(false);
+        }
+      });
+    !isDirty &&
+      (() => {
+        onAlert("info", "No changes made!");
         setModal();
         setUpdated();
         setLoading(false);
-      } else {
-        onAlert("error", "Pin update has failed.");
-        setLoading(false);
-      }
-    });
+      })();
   }
 
   return (
@@ -114,6 +134,7 @@ function EditPin({ pin, setModal, onAlert, setUpdated }) {
               loading={loading}
               variant="contained"
               sx={{ width: "25%", margin: 1 }}
+              ref={submitEl}
             >
               Save
             </LoadingButton>
@@ -124,6 +145,7 @@ function EditPin({ pin, setModal, onAlert, setUpdated }) {
               variant="contained"
               color="nuetral"
               sx={{ width: "25%", margin: 1 }}
+              ref={cancelEl}
             >
               Cancel
             </Button>

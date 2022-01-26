@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { postNewUser } from "../../api/api";
@@ -14,6 +14,7 @@ function Register({ onLoginLink }) {
   const [errorMsg, setErrorMsg] = useState("");
   const [successReg, setSuccessReg] = useState(false);
   const [loading, setLoading] = useState(false);
+  const submitEl = useRef(null);
 
   const {
     register,
@@ -22,6 +23,15 @@ function Register({ onLoginLink }) {
   } = useForm({
     resolver: yupResolver(registerSchema),
   });
+
+  useEffect(() => {
+    const unsubscribe = window.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+  }, []);
+
+  function handleKeyPress(event) {
+    event.key === "Enter" && submitEl?.current?.focus()?.click();
+  }
 
   function onSubmit(data) {
     setLoading(true);
@@ -70,6 +80,7 @@ function Register({ onLoginLink }) {
             fullWidth={true}
             inputProps={{
               maxLength: 250,
+              autoCapitalize: "none",
             }}
             InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
             required
@@ -93,6 +104,7 @@ function Register({ onLoginLink }) {
             type="password"
             inputProps={{
               maxLength: 250,
+              autoCapitalize: "none",
             }}
             InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
             required
@@ -116,6 +128,7 @@ function Register({ onLoginLink }) {
             type="password"
             inputProps={{
               maxLength: 250,
+              autoCapitalize: "none",
             }}
             InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
             required
@@ -134,6 +147,7 @@ function Register({ onLoginLink }) {
             variant="contained"
             fullWidth={true}
             sx={{ marginTop: 1, padding: 1.5, borderRadius: 3 }}
+            ref={submitEl}
           >
             Submit
           </LoadingButton>

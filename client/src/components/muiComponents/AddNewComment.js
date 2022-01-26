@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Avatar,
   Button,
@@ -20,6 +20,8 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
   const userObj = JSON.parse(sessionStorage.user);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
+  const submitEl = useRef(null);
+  const cancelEl = useRef(null);
   const {
     register,
     handleSubmit,
@@ -27,6 +29,17 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
   } = useForm({
     resolver: yupResolver(addNewCommentSchema),
   });
+
+  useEffect(() => {
+    const unsubscribe = document.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleKeyPress(event) {
+    event.key === "Enter" && submitEl?.current?.focus()?.click();
+    event.key === "Escape" && setDisplayAddNew();
+  }
 
   function onSubmit(data) {
     setLoading(true);
@@ -51,8 +64,8 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
           <Avatar sx={{ bgcolor: "#adf" }}>
             <Typography variant="h5">
               {userObj?.name?.length > 0
-                ? userObj.name.charAt(0).toUpperCase()
-                : userObj.username.charAt(0).toUpperCase()}
+                ? userObj?.name?.charAt(0)?.toUpperCase()
+                : userObj?.username?.charAt(0)?.toUpperCase()}
             </Typography>
           </Avatar>
         }
@@ -62,7 +75,7 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
           </Typography>
         }
         subheader={
-          userObj?.name?.length > 0 ? userObj.name : `@${userObj.username}`
+          userObj?.name?.length > 0 ? userObj?.name : `@${userObj?.username}`
         }
         sx={{ paddingTop: 1, paddingBottom: 1 }}
       />
@@ -88,6 +101,7 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
           multiline
           size="small"
           required
+          autoFocus
           error={errors.commentBody ? true : false}
         />
         {errors.commentBody && (
@@ -111,6 +125,7 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
           variant="contained"
           size="small"
           sx={{ marginRight: 1, marginLeft: 1 }}
+          ref={submitEl}
         >
           Submit
         </LoadingButton>
@@ -121,6 +136,7 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
             setDisplayAddNew();
           }}
           size="small"
+          ref={cancelEl}
         >
           Cancel
         </Button>

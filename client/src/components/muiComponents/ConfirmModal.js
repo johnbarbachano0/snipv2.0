@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Button, Grid, Modal, Paper, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 
@@ -23,6 +23,17 @@ function ConfirmModal({
   onClickCancel,
   confirmLoading,
 }) {
+  const submitEl = useRef(null);
+
+  useEffect(() => {
+    const unsubscribe = document.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+  }, []);
+
+  function handleKeyPress(event) {
+    event.key === "Enter" && submitEl?.current?.focus()?.click();
+  }
+
   return (
     <Modal open={openModal} onClose={onClickCancel}>
       <Paper style={{ ...style.container }}>
@@ -37,6 +48,7 @@ function ConfirmModal({
               loading={confirmLoading}
               variant="contained"
               sx={{ width: "45%", margin: 0.5 }}
+              ref={submitEl}
             >
               Yes
             </LoadingButton>

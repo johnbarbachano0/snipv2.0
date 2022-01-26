@@ -1,5 +1,5 @@
 import useStyles from "./NavBar.style";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { themeContext } from "./ThemeContext";
 import {
   AppBar,
@@ -39,6 +39,9 @@ function NavBar({
   const [searchVal, setSearchVal] = useState("");
   const [actionsAnchorEl, setActionsAnchorEl] = useState("");
   const [actionsOpen, setActionsOpen] = useState(false);
+  const navSearchEl = useRef(null);
+  const submitEl = useRef(null);
+  const cancelEl = useRef(null);
   const showSearch =
     page === "home" ||
     page === "links" ||
@@ -47,6 +50,36 @@ function NavBar({
   const showAdd = page === "home" || page === "links" || page === "pin";
   const showExport = page === "history" || page === "access";
   const showPdf = page === "history" || page === "access";
+
+  useEffect(() => {
+    navSearchEl?.current?.focus();
+  }, [isLoading]);
+
+  useEffect(() => {
+    const unsubscribe =
+      showSearch && document.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleKeyPress(e) {
+    e.key === "Enter" && handleSubmitEnter();
+    e.key === "Escape" && handleCancel();
+  }
+
+  function handleSubmit() {
+    searchVal?.length > 0 && onSearch(searchVal);
+  }
+
+  function handleSubmitEnter() {
+    const searchValue = navSearchEl?.current?.value;
+    searchValue?.length > 0 && onSearch(searchValue);
+  }
+
+  function handleCancel() {
+    setSearchVal("");
+    onSearch("");
+  }
 
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);
@@ -102,24 +135,22 @@ function NavBar({
                     <Tooltip title="Clear">
                       <ClearRoundedIcon
                         className={classes.deleteIcon}
-                        onClick={() => {
-                          setSearchVal("");
-                          onSearch("");
-                        }}
+                        onClick={handleCancel}
+                        ref={cancelEl}
                       />
                     </Tooltip>
                     <Tooltip title="Search">
                       <SearchRoundedIcon
                         className={classes.searchIcon}
-                        onClick={() =>
-                          searchVal.length > 0 && onSearch(searchVal)
-                        }
+                        onClick={handleSubmit}
+                        ref={submitEl}
                       />
                     </Tooltip>
                   </InputAdornment>
                 ),
               }}
               hiddenLabel
+              inputProps={{ autoCapitalize: "none", ref: navSearchEl }}
               placeholder="Search..."
               size="small"
               variant="filled"

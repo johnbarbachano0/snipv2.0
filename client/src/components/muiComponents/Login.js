@@ -90,9 +90,11 @@ function Login() {
         fullWidth={true}
         inputProps={{
           maxLength: 250,
+          autoCapitalize: "none",
         }}
         InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
         required
+        autoFocus
         error={errors.username ? true : false}
       />
       {errors.username && (
@@ -112,6 +114,7 @@ function Login() {
         type="password"
         inputProps={{
           maxLength: 250,
+          autoCapitalize: "none",
         }}
         InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
         required

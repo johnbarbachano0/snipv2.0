@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { postNewLink } from "../../api/api";
@@ -60,6 +60,8 @@ const tags = [
 function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
   const classes = useStyles();
   const userObj = JSON.parse(sessionStorage.user);
+  const submitEl = useRef(null);
+  const cancelEl = useRef(null);
   const {
     register,
     handleSubmit,
@@ -69,6 +71,16 @@ function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
   });
   const [loading, setLoading] = useState(false);
   const [tag, setTag] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = document.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+  }, []);
+
+  function handleKeyPress(event) {
+    event.key === "Enter" && submitEl?.current?.focus()?.click();
+    event.key === "Escape" && cancelEl?.current?.focus()?.click();
+  }
 
   function handleChange(event) {
     const { value } = event.target;
@@ -108,6 +120,7 @@ function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
               {...register("title")}
               placeholder="Title..."
               required
+              autoFocus
               autoComplete="off"
               fullWidth={true}
               inputProps={{
@@ -217,6 +230,7 @@ function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
               loading={loading}
               variant="contained"
               sx={{ margin: 1 }}
+              ref={submitEl}
             >
               Submit
             </LoadingButton>
@@ -227,6 +241,7 @@ function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
                 onAddNewCancel();
               }}
               sx={{ margin: 1 }}
+              ref={cancelEl}
             >
               Cancel
             </Button>
