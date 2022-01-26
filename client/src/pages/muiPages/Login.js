@@ -2,36 +2,48 @@ import React, { useState, useEffect, useContext } from "react";
 import { Box, Card, Fab, Tooltip, Typography } from "@mui/material";
 import Login from "../../components/muiComponents/Login";
 import Register from "../../components/muiComponents/Register";
-import { getLoginImage } from "../../components/MiscJavascript";
+import {
+  getLoginImage,
+  getLoginImageMobile,
+} from "../../components/MiscJavascript";
 import useStyles from "./Pages.style";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { themeContext } from "../../components/muiComponents/ThemeContext";
+import useWindowDimensions from "../../components/useWindowDimension";
 
 function LoginPage() {
+  const dimension = useWindowDimensions();
+  const isMobile = dimension?.width < 480;
   const classes = useStyles();
   const { darkMode, setDark } = useContext(themeContext);
   const [type, setType] = useState("login");
   const [loginImage, setLoginImage] = useState("");
+
   function handleType(type) {
     setType(type);
   }
 
   useEffect(() => {
-    const image = getLoginImage();
+    const image = isMobile ? getLoginImageMobile() : getLoginImage();
     setLoginImage(image);
-  }, []);
+  }, [isMobile]);
 
   return (
     <Box
       className={classes.bgContainer}
       sx={{
         backgroundImage: `url('${loginImage}')`,
+        height: dimension.height,
       }}
     >
       <Card
         className={(classes.loginContainer, classes.center)}
-        sx={{ borderRadius: 5, width: 300 }}
+        sx={{
+          borderRadius: 5,
+          width: isMobile ? dimension.width * 0.8 : 250,
+          minWidth: 300,
+        }}
       >
         <Box>
           <Box className={classes.loginTitle}>

@@ -22,6 +22,7 @@ const useStyles = makeStyles({
     backgroundColor: "#6494edc0",
     display: "flex",
     flexDirection: "column",
+    opacity: 0.5,
   },
   loginTitle: {
     "& *": { cursor: "pointer", width: "100%" },

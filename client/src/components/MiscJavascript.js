@@ -61,6 +61,12 @@ export function getLoginImage() {
   return image.default;
 }
 
+export function getLoginImageMobile() {
+  const x = Math.floor(Math.random() * 10 + 1);
+  const image = require(`../images/login/mobile/${x}.jpg`);
+  return image.default;
+}
+
 export function getHelloImage() {
   const x = Math.floor(Math.random() * 4 + 1);
   const image = require(`../images/hello/${x}.jpg`);
@@ -70,6 +76,12 @@ export function getHelloImage() {
 export function getLogoutImage() {
   const x = Math.floor(Math.random() * 17 + 1);
   const image = require(`../images/logout/${x}.jpg`);
+  return image.default;
+}
+
+export function getLogoutImageMobile() {
+  const x = Math.floor(Math.random() * 11 + 1);
+  const image = require(`../images/logout/mobile/${x}.jpg`);
   return image.default;
 }
 
