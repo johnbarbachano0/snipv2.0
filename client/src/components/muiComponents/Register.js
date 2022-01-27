@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { postNewUser } from "../../api/api";
@@ -6,8 +6,19 @@ import { removeSpace } from "../MiscJavascript";
 import { registerSchema } from "../../schema/loginSchema";
 import { Box, TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { themeContext } from "../../components/muiComponents/ThemeContext";
+
+const styles = (darkMode) => {
+  return {
+    common: {
+      borderRadius: 4,
+      background: darkMode ? "rgba(0, 0, 0, .90)" : "rgba(218, 223, 225, .95)",
+    },
+  };
+};
 
 function Register({ onLoginLink }) {
+  const { darkMode } = useContext(themeContext);
   const [uname, setUname] = useState("");
   const [pword, setPword] = useState("");
   const [rePword, setRePword] = useState("");
@@ -85,7 +96,7 @@ function Register({ onLoginLink }) {
             InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
             required
             error={errors.username ? true : false}
-            sx={{}}
+            sx={{ ...styles(darkMode).common }}
           />
           {errors.username && (
             <Typography color="error" textAlign="left" fontSize={14}>
@@ -109,7 +120,10 @@ function Register({ onLoginLink }) {
             InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
             required
             error={errors.password || errorMsg ? true : false}
-            sx={{ marginTop: 1 }}
+            sx={{
+              marginTop: 1,
+              ...styles(darkMode).common,
+            }}
           />
           {errors.password && (
             <Typography color="error" textAlign="left" fontSize={14}>
@@ -133,7 +147,10 @@ function Register({ onLoginLink }) {
             InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
             required
             error={errors.repassword ? true : false}
-            sx={{ marginTop: 1 }}
+            sx={{
+              marginTop: 1,
+              ...styles(darkMode).common,
+            }}
           />
           {errors.repassword && (
             <Typography color="error" textAlign="left" fontSize={14}>

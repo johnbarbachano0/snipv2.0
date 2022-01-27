@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../schema/loginSchema";
@@ -10,6 +10,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import { themeContext } from "../../components/muiComponents/ThemeContext";
 require("dotenv").config();
 
 const styles = {
@@ -21,6 +22,7 @@ const styles = {
 };
 
 function Login() {
+  const { darkMode } = useContext(themeContext);
   const history = useHistory();
   const [errorMsg, setErrorMsg] = useState("");
   const [uname, setUname] = useState("");
@@ -96,6 +98,12 @@ function Login() {
         required
         autoFocus
         error={errors.username ? true : false}
+        sx={{
+          borderRadius: 4,
+          background: darkMode
+            ? "rgba(0, 0, 0, .90)"
+            : "rgba(218, 223, 225, .95)",
+        }}
       />
       {errors.username && (
         <Typography color="error" textAlign="left" fontSize={14}>
@@ -119,7 +127,13 @@ function Login() {
         InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
         required
         error={errors.password || errorMsg ? true : false}
-        sx={{ marginTop: 1 }}
+        sx={{
+          marginTop: 1,
+          borderRadius: 4,
+          background: darkMode
+            ? "rgba(0, 0, 0, .90)"
+            : "rgba(218, 223, 225, .90)",
+        }}
       />
       {errors.password && (
         <Typography color="error" textAlign="left" fontSize={14}>

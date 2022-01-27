@@ -41,8 +41,11 @@ function LoginPage() {
         className={(classes.loginContainer, classes.center)}
         sx={{
           borderRadius: 5,
-          width: isMobile ? dimension.width * 0.8 : 250,
+          width: isMobile ? dimension.width * 0.75 : 250,
           minWidth: 300,
+          background: darkMode
+            ? "rgba(0, 0, 0, 0.60)"
+            : "rgba(255,255, 255, 0.75)",
         }}
       >
         <Box>
