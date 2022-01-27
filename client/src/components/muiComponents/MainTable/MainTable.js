@@ -93,16 +93,9 @@ function MainTable({ loading, rows, columns, onExport, onPdf, filename }) {
     });
   }
 
-  function handleExportRows(type) {
+  function handleExportRows() {
     var newArr;
-    if (type === "csv") {
-      newArr = rows.sort(getComparator(sort.order, sort.field)).map((row) => {
-        return columns.map((col) =>
-          col?.renderExport ? col.renderExport(row[col.id]) : row[col.id]
-        );
-      });
-      return newArr;
-    } else if (rows?.length > 0 && type === "pdf") {
+    if (rows?.length > 0) {
       newArr = rows.sort(getComparator(sort.order, sort.field)).map((row) => {
         const newData = columns.map((col) => {
           return {
@@ -122,7 +115,7 @@ function MainTable({ loading, rows, columns, onExport, onPdf, filename }) {
   function genPdfViewer() {
     return (
       <PDFViewer width={"100%"} height={"100%"}>
-        <PdfComponent rows={handleExportRows("pdf")} columns={columns} />
+        <PdfComponent rows={handleExportRows()} columns={columns} />
       </PDFViewer>
     );
   }
@@ -253,8 +246,10 @@ function MainTable({ loading, rows, columns, onExport, onPdf, filename }) {
         />
         {!loading && (
           <CSVLink
-            data={handleExportRows("csv")}
-            headers={columns.map((column) => column.label)}
+            data={handleExportRows()}
+            headers={columns.map((column) => {
+              return { label: column.label, key: column.id };
+            })}
             target="_blank"
             filename={`${filename}_as_of_${DateTimeConverter(
               Date.now()
