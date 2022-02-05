@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Avatar,
   Button,
@@ -10,28 +10,50 @@ import {
   Typography,
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useParams } from "react-router-dom";
 import { postCommentByPinId } from "../../api/api";
 import { addNewCommentSchema } from "../../schema/addNewCommentSchema";
+import useCountdown from "../useCountdown";
 
 function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
   const userObj = JSON.parse(sessionStorage.user);
+  const [countdown, setCountdown] = useCountdown(0);
+  const [cancel, setCancel] = useState("Cancel");
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
+  const cancelEl = useRef(null);
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm({
     resolver: yupResolver(addNewCommentSchema),
   });
 
+  useEffect(() => {
+    const unsubscribe = document.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    countdown === 0 && setCancel("Cancel");
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [countdown]);
+
+  function handleKeyPress(event) {
+    event.key === "Escape" && setDisplayAddNew();
+  }
+
   function onSubmit(data) {
     setLoading(true);
-    const response = postCommentByPinId(data);
-    response.then((isSuccess) => {
+    postCommentByPinId({
+      ...data,
+      UserId: userObj.id,
+      PinId: id,
+    }).then((isSuccess) => {
       if (isSuccess) {
         setDisplayAddNew();
         setUpdated();
@@ -44,13 +66,24 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
     });
   }
 
+  const handleConfirmCancel = () => {
+    if (cancel === "Cancel" && isDirty) {
+      setCancel("Confirm?");
+      setCountdown(10);
+    } else {
+      setDisplayAddNew();
+    }
+  };
+
   return (
     <Card sx={{ marginTop: 1 }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: "#adf" }}>
             <Typography variant="h5">
-              {userObj.username.charAt(0).toUpperCase()}
+              {userObj?.name?.length > 0
+                ? userObj?.name?.charAt(0)?.toUpperCase()
+                : userObj?.username?.charAt(0)?.toUpperCase()}
             </Typography>
           </Avatar>
         }
@@ -59,7 +92,9 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
             Add New Comment
           </Typography>
         }
-        subheader={`@${userObj.username}`}
+        subheader={
+          userObj?.name?.length > 0 ? userObj?.name : `@${userObj?.username}`
+        }
         sx={{ paddingTop: 1, paddingBottom: 1 }}
       />
       <CardContent
@@ -70,34 +105,31 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
           overflowY: "auto",
         }}
       >
-        <TextField
-          variant="standard"
+        <Controller
           name="commentBody"
-          {...register("commentBody")}
-          placeholder="Enter comments here..."
-          autoComplete="off"
-          fullWidth={true}
-          inputProps={{
-            maxLength: 250,
-          }}
-          InputProps={{ style: { fontSize: 14 } }}
-          multiline
-          size="small"
-          required
-          error={errors.commentBody ? true : false}
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <TextField
+              variant="standard"
+              onChange={onChange}
+              placeholder="Enter comments here..."
+              autoComplete="off"
+              fullWidth={true}
+              inputProps={{ maxLength: 250 }}
+              InputProps={{ style: { fontSize: 14 } }}
+              multiline
+              size="small"
+              required
+              autoFocus
+              error={errors.commentBody ? true : false}
+            />
+          )}
         />
         {errors.commentBody && (
           <Typography color="error" textAlign="left" fontSize={14}>
             &#x26A0;{errors.commentBody.message}
           </Typography>
         )}
-        <input
-          name="UserId"
-          value={userObj.id}
-          {...register("UserId")}
-          hidden
-        />
-        <input name="PinId" value={id} {...register("PinId")} hidden />
       </CardContent>
       <CardActions>
         <LoadingButton
@@ -111,14 +143,14 @@ function AddNewComment({ setDisplayAddNew, setUpdated, onAlert }) {
           Submit
         </LoadingButton>
         <Button
+          disabled={loading}
           variant="contained"
           color="nuetral"
-          onClick={() => {
-            setDisplayAddNew();
-          }}
+          onClick={handleConfirmCancel}
           size="small"
+          ref={cancelEl}
         >
-          Cancel
+          {cancel} {cancel !== "Cancel" && `(${countdown})`}
         </Button>
       </CardActions>
     </Card>

@@ -50,13 +50,17 @@ function Comment({
                     avatar={
                       <Avatar sx={{ bgcolor: "#adf" }}>
                         <Typography variant="h5">
-                          {comment.User.username.charAt(0).toUpperCase()}
+                          {comment?.User?.name?.length > 0
+                            ? comment.User.name.charAt(0).toUpperCase()
+                            : comment.User.username.charAt(0).toUpperCase()}
                         </Typography>
                       </Avatar>
                     }
                     title={
                       <Typography variant="h7" fontWeight={600}>
-                        @{comment.User.username}
+                        {comment?.User?.name?.length > 0
+                          ? comment.User.name
+                          : `@${comment.User.username}`}
                       </Typography>
                     }
                     subheader={DateTimeConverter(comment.updatedAt)}

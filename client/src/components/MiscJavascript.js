@@ -50,9 +50,20 @@ export function DateConverter(ISOdate) {
   return dateFormat;
 }
 
+export function TimeConverter(ISOdate) {
+  const timeFormat = new Date(ISOdate).toLocaleTimeString();
+  return timeFormat;
+}
+
 export function getLoginImage() {
   const x = Math.floor(Math.random() * 10 + 1);
   const image = require(`../images/login/${x}.jpg`);
+  return image.default;
+}
+
+export function getLoginImageMobile() {
+  const x = Math.floor(Math.random() * 10 + 1);
+  const image = require(`../images/login/mobile/${x}.jpg`);
   return image.default;
 }
 
@@ -68,6 +79,24 @@ export function getLogoutImage() {
   return image.default;
 }
 
+export function getLogoutImageMobile() {
+  const x = Math.floor(Math.random() * 11 + 1);
+  const image = require(`../images/logout/mobile/${x}.jpg`);
+  return image.default;
+}
+
 export function removeSpace(value) {
   return value.replace(/\s/g, "");
+}
+
+export function Capitalize(str) {
+  return str?.charAt(0)?.toUpperCase() + str?.slice(1);
+}
+
+export function CapitalizeFirstLetters(str) {
+  const arr = str?.split(" ");
+  for (var i = 0; i < arr?.length; i++) {
+    arr[i] = arr[i]?.charAt(0)?.toUpperCase() + arr[i]?.slice(1);
+  }
+  return arr.join(" ");
 }

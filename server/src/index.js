@@ -50,6 +50,10 @@ const CommentsRouter = require("../routes/Comments");
 app.use("/comment", CommentsRouter);
 const LinksRouter = require("../routes/Links");
 app.use("/link", LinksRouter);
+const AuditTrailRouter = require("../routes/AuditTrail");
+app.use("/history", AuditTrailRouter);
+const ChangelogsRouter = require("../routes/Changelogs");
+app.use("/changelogs", ChangelogsRouter);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);

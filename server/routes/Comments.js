@@ -8,7 +8,7 @@ router.get("/:pinId", (req, res, next) => {
   Comments.findAll({
     where: { PinId: req.params.pinId, status: true },
     order: [["updatedAt", "DESC"]],
-    include: { model: Users, required: true, attributes: ["username"] },
+    include: { model: Users, required: true, attributes: ["username", "name"] },
   })
     .then((comments) => {
       res.json(comments);

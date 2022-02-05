@@ -7,30 +7,29 @@ const { Op } = require("sequelize");
 //Get Search Pins
 router.get("/search", (req, res, next) => {
   const { query } = req.query;
-  const queryObj = {
-    [Op.like]: `%${query}%`,
-  };
+  const queryObj = { [Op.substring]: query };
   Pins.findAll({
     include: {
       model: Users,
       as: "User",
       required: true,
-      attributes: ["username"],
+      attributes: ["username", "name"],
     },
     where: {
       [Op.or]: [
         { title: queryObj },
         { description: queryObj },
         { "$User.username$": queryObj },
+        { "$User.name$": queryObj },
       ],
       status: true,
     },
+    order: [["updatedAt", "DESC"]],
   })
     .then((pins) => {
       res.json(pins);
     })
     .catch((error) => {
-      console.log(error);
       createTrail(
         "Get All Pins",
         "Error during get all pins",
@@ -47,7 +46,7 @@ router.get("/search", (req, res, next) => {
 router.get("/id/:id", async (req, res, next) => {
   const id = req.params.id;
   Pins.findByPk(id, {
-    include: { model: Users, required: true, attributes: ["username"] },
+    include: { model: Users, required: true, attributes: ["username", "name"] },
   })
     .then((pins) => {
       res.json(pins);

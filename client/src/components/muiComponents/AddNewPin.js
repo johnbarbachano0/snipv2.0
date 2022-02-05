@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { themeContext } from "./ThemeContext";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { postNewPin } from "../../api/api";
 import { addNewPinSchema } from "../../schema/addNewPinSchema";
@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { makeStyles } from "@mui/styles";
+import useCountdown from "../useCountdown";
 
 const useStyles = makeStyles({
   newPinContainer: {
@@ -25,7 +26,9 @@ const useStyles = makeStyles({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 550,
-    maxWidth: "80vw",
+    maxWidth: "95vw",
+    maxHeight: "95vh",
+    overflowY: "auto",
   },
   gridItem: {
     padding: 5,
@@ -44,31 +47,52 @@ function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
   const { isMobile } = useContext(themeContext);
   const userObj = JSON.parse(sessionStorage.user);
   const {
-    register,
     handleSubmit,
-    formState: { errors },
+    control,
+    formState: { errors, isDirty },
+    setValue,
   } = useForm({
     resolver: yupResolver(addNewPinSchema),
   });
-
+  const [cancelEl, setCancelEl] = useState("Cancel");
+  const [countdown, setCountdown] = useCountdown(0);
   const [loading, setLoading] = useState(false);
 
-  function onSubmit(data) {
+  useEffect(() => {
+    countdown === 0 && setCancelEl("Cancel");
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [countdown]);
+
+  const onSubmit = (data) => {
     setLoading(true);
-    const response = postNewPin(data);
-    response.then((res) => {
-      if (res) {
-        onAddNewPin("success", "Added new pin successfully!");
-        setLoading(false);
-      } else {
-        onAddNewPin("error", "Saving new pin failed.");
-        setLoading(false);
-      }
+    postNewPin({ ...data, UserId: userObj.id }).then((res) => {
+      res && onAddNewPin("success", "Added new pin successfully!");
+      !res && onAddNewPin("error", "Saving new pin failed.");
+      setLoading(false);
     });
-  }
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setValue(id, value, { shouldDirty: true });
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason && reason === "backdropClick") return;
+    onAddNewCancel();
+  };
+
+  const handleConfirmCancel = () => {
+    if (cancelEl === "Cancel" && isDirty) {
+      setCancelEl("Click again!");
+      setCountdown(10);
+    } else {
+      handleClose();
+    }
+  };
 
   return (
-    <Modal open={openModal} onClose={onAddNewCancel}>
+    <Modal open={openModal} onClose={handleClose}>
       <Grid
         container
         direction="column"
@@ -81,19 +105,24 @@ function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
             <Typography variant="h5">Add New Pin</Typography>
           </Grid>
           <Grid item className={classes.gridItem}>
-            <TextField
-              variant="standard"
+            <Controller
               name="title"
-              {...register("title")}
-              placeholder="Title..."
-              required
-              autoComplete="off"
-              fullWidth={true}
-              inputProps={{
-                maxLength: 100,
-              }}
-              InputProps={{ style: { fontSize: 14 } }}
-              error={errors.title ? true : false}
+              control={control}
+              render={({ field: { value } }) => (
+                <TextField
+                  id="title"
+                  value={value}
+                  onChange={handleChange}
+                  variant="standard"
+                  placeholder="Title..."
+                  autoFocus
+                  autoComplete="off"
+                  fullWidth={true}
+                  inputProps={{ maxLength: 100 }}
+                  InputProps={{ style: { fontSize: 14 } }}
+                  error={errors.title ? true : false}
+                />
+              )}
             />
             {errors.title && (
               <Typography color="error" textAlign="left" fontSize={14}>
@@ -102,18 +131,26 @@ function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
             )}
           </Grid>
           <Grid item className={classes.gridItem}>
-            <TextField
+            <Controller
               name="description"
-              {...register("description")}
-              multiline
-              rows={isMobile ? 5 : 10}
-              placeholder="Enter notes here..."
-              inputProps={{
-                maxLength: 2000,
-              }}
-              fullWidth={true}
-              InputProps={{ style: { fontSize: 14 } }}
-              error={errors.description ? true : false}
+              control={control}
+              render={({ field: { value } }) => (
+                <TextField
+                  id="description"
+                  value={value}
+                  onChange={handleChange}
+                  multiline
+                  rows={isMobile ? 15 : 10}
+                  placeholder="Enter notes here..."
+                  required
+                  inputProps={{
+                    maxLength: 2000,
+                  }}
+                  fullWidth={true}
+                  InputProps={{ style: { fontSize: 14 } }}
+                  error={errors.description ? true : false}
+                />
+              )}
             />
             {errors.description && (
               <Typography color="error" textAlign="left" fontSize={14}>
@@ -121,17 +158,10 @@ function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
               </Typography>
             )}
           </Grid>
-
-          <input
-            name="UserId"
-            {...register("UserId")}
-            placeholder="UserId..."
-            value={userObj.id}
-            type="hidden"
-          />
-
           <Grid item className={classes.gridItem}>
             <LoadingButton
+              id="submitBtn"
+              name="submitBtn"
               onClick={handleSubmit(onSubmit)}
               color="primary"
               loading={loading}
@@ -141,14 +171,13 @@ function AddNewPin({ openModal, onAddNewPin, onAddNewCancel }) {
               Submit
             </LoadingButton>
             <Button
+              disabled={loading}
               variant="contained"
               color="nuetral"
-              onClick={() => {
-                onAddNewCancel();
-              }}
+              onClick={handleConfirmCancel}
               sx={{ margin: 1 }}
             >
-              Cancel
+              {cancelEl} {cancelEl !== "Cancel" && `(${countdown})`}
             </Button>
           </Grid>
         </Paper>

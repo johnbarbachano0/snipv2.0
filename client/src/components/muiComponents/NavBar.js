@@ -1,5 +1,5 @@
 import useStyles from "./NavBar.style";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { themeContext } from "./ThemeContext";
 import {
   AppBar,
@@ -13,21 +13,16 @@ import {
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import AddIcon from "@mui/icons-material/Add";
+import DownloadIcon from "@mui/icons-material/DownloadRounded";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import PdfIcon from "@mui/icons-material/PictureAsPdfRounded";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AppMenu from "./AppMenu";
 import NavActionsMobile from "./NavActionsMobile";
 
-function NavBar({
-  page,
-  isLoading,
-  onAddNewPin,
-  onAddNewLink,
-  onAddNewComment,
-  onSearch,
-}) {
+function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
   const classes = useStyles();
   const { darkMode, setDark, isMobile } = useContext(themeContext);
   const [anchorEl, setAnchorEl] = useState("");
@@ -35,6 +30,50 @@ function NavBar({
   const [searchVal, setSearchVal] = useState("");
   const [actionsAnchorEl, setActionsAnchorEl] = useState("");
   const [actionsOpen, setActionsOpen] = useState(false);
+  const navSearchEl = useRef(null);
+  const submitEl = useRef(null);
+  const cancelEl = useRef(null);
+  const showSearch =
+    page === "home" ||
+    page === "links" ||
+    page === "history" ||
+    page === "access" ||
+    page === "tracker";
+  const showAdd =
+    page === "home" || page === "links" || page === "pin" || page === "tracker";
+  const showExport =
+    page === "history" || page === "access" || page === "tracker";
+  const showPdf = page === "history" || page === "access" || page === "tracker";
+
+  useEffect(() => {
+    navSearchEl?.current?.focus();
+  }, [isLoading]);
+
+  useEffect(() => {
+    const unsubscribe =
+      showSearch && document.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleKeyPress(e) {
+    e.key === "Enter" && handleSubmitEnter();
+    e.key === "Escape" && handleCancel();
+  }
+
+  function handleSubmit() {
+    searchVal?.length > 0 && onSearch(searchVal);
+  }
+
+  function handleSubmitEnter() {
+    const searchValue = navSearchEl?.current?.value;
+    searchValue?.length > 0 && onSearch(searchValue);
+  }
+
+  function handleCancel() {
+    setSearchVal("");
+    onSearch("");
+  }
 
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);
@@ -79,87 +118,112 @@ function NavBar({
             handleMenuClose={handleMenuClose}
           />
         </Grid>
-        <Grid item xs={isMobile ? 8 : 5} className={classes.searchBox}>
-          <TextField
-            className={classes.textSearch}
-            color="warning"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Tooltip title="Clear">
-                    <ClearRoundedIcon
-                      className={classes.deleteIcon}
-                      onClick={() => {
-                        setSearchVal("");
-                        onSearch("");
-                      }}
-                    />
-                  </Tooltip>
-                  <Tooltip title="Search">
-                    <SearchRoundedIcon
-                      className={classes.searchIcon}
-                      onClick={() =>
-                        searchVal.length > 0 && onSearch(searchVal)
-                      }
-                    />
-                  </Tooltip>
-                </InputAdornment>
-              ),
-            }}
-            hiddenLabel
-            placeholder="Search..."
-            size="small"
-            variant="filled"
-            disabled={
-              isLoading ||
-              page === "pin" ||
-              page === "about" ||
-              page === "profile"
-            }
-            value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
-            sx={{
-              display:
-                page === "pin" || page === "about" || page === "profile"
-                  ? "none"
-                  : "flex",
-            }}
-          />
-        </Grid>
+        {showSearch && (
+          <Grid item xs={isMobile ? 8 : 5} className={classes.searchBox}>
+            <TextField
+              className={classes.textSearch}
+              color="warning"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Tooltip title="Clear">
+                      <ClearRoundedIcon
+                        className={classes.deleteIcon}
+                        onClick={handleCancel}
+                        ref={cancelEl}
+                      />
+                    </Tooltip>
+                    <Tooltip title="Search">
+                      <SearchRoundedIcon
+                        className={classes.searchIcon}
+                        onClick={handleSubmit}
+                        ref={submitEl}
+                      />
+                    </Tooltip>
+                  </InputAdornment>
+                ),
+              }}
+              hiddenLabel
+              inputProps={{ autoCapitalize: "none", ref: navSearchEl }}
+              placeholder="Search..."
+              size="small"
+              variant="filled"
+              disabled={isLoading || !showSearch}
+              value={searchVal}
+              onChange={(e) => setSearchVal(e.target.value)}
+              sx={{
+                display: !showSearch ? "none" : "flex",
+              }}
+            />
+          </Grid>
+        )}
         <Grid item className={classes.actionBox}>
           <Grid container direction="row">
             {!isMobile && (
               <>
-                <Tooltip
-                  title={
-                    page === "home"
-                      ? "Add New Pin"
-                      : page === "links"
-                      ? "Add New Link"
-                      : page === "pin"
-                      ? "Add New Comment"
-                      : "Add New"
-                  }
-                  sx={{ marginLeft: 0.5, marginRight: 0.5 }}
-                >
-                  <Fab size="small" color="secondary">
-                    <AddIcon
-                      onClick={() => {
-                        page === "home" && onAddNewPin();
-                        page === "links" && onAddNewLink();
-                        page === "pin" && onAddNewComment();
-                      }}
-                    />
-                  </Fab>
-                </Tooltip>
-                <Tooltip
-                  title={darkMode ? "Lights on" : "Lights off"}
-                  sx={{ marginLeft: 0.5, marginRight: 0.5 }}
-                >
+                {showAdd && (
+                  <Tooltip
+                    title={
+                      page === "home"
+                        ? "Add New Pin"
+                        : page === "links"
+                        ? "Add New Link"
+                        : page === "pin"
+                        ? "Add New Comment"
+                        : page === "tracker"
+                        ? "Add New Tracker"
+                        : "Add New"
+                    }
+                  >
+                    <span>
+                      <Fab
+                        size="small"
+                        color="secondary"
+                        onClick={() => onAdd()}
+                        disabled={isLoading}
+                        sx={{ marginLeft: 0.25, marginRight: 0.25 }}
+                      >
+                        <AddIcon />
+                      </Fab>
+                    </span>
+                  </Tooltip>
+                )}
+                {showExport && (
+                  <Tooltip title={"Export to CSV"}>
+                    <span>
+                      <Fab
+                        size="small"
+                        color="secondary"
+                        onClick={() => onExport()}
+                        disabled={isLoading}
+                        sx={{ marginLeft: 0.25, marginRight: 0.25 }}
+                      >
+                        <DownloadIcon />
+                      </Fab>
+                    </span>
+                  </Tooltip>
+                )}
+                {showPdf && (
+                  <Tooltip title={"Export to PDF"}>
+                    <span>
+                      <Fab
+                        size="small"
+                        color="secondary"
+                        onClick={() => onPdf()}
+                        disabled={isLoading}
+                        sx={{ marginLeft: 0.25, marginRight: 0.25 }}
+                      >
+                        <PdfIcon />
+                      </Fab>{" "}
+                    </span>
+                  </Tooltip>
+                )}
+                <Tooltip title={darkMode ? "Lights on" : "Lights off"}>
                   <Fab
                     size="small"
                     color="secondary"
                     onClick={() => setDark(!darkMode)}
+                    sx={{ marginLeft: 0.25, marginRight: 0.25 }}
                   >
                     {darkMode ? (
                       <LightModeIcon className={classes.lightIcon} />
@@ -172,11 +236,13 @@ function NavBar({
             )}
             {isMobile && (
               <>
-                <Tooltip
-                  title={"Actions"}
-                  sx={{ marginLeft: 0.5, marginRight: 0.5 }}
-                >
-                  <Fab size="small" color="secondary" onClick={handleActions}>
+                <Tooltip title={"Actions"}>
+                  <Fab
+                    size="small"
+                    color="secondary"
+                    onClick={handleActions}
+                    sx={{ marginLeft: 0.5, marginRight: 0.5 }}
+                  >
                     <MoreVertIcon />
                   </Fab>
                 </Tooltip>
@@ -185,9 +251,13 @@ function NavBar({
                   actionsAnchorEl={actionsAnchorEl}
                   actionsOpen={actionsOpen}
                   handleActionsClose={handleActionsClose}
-                  onAddNewPin={() => onAddNewPin()}
-                  onAddNewLink={() => onAddNewLink()}
-                  onAddNewComment={() => onAddNewComment()}
+                  onAdd={() => onAdd()}
+                  onExport={() => onExport()}
+                  showAdd={showAdd}
+                  showExport={showExport}
+                  onPdf={() => onPdf()}
+                  showPdf={showPdf}
+                  isLoading={isLoading}
                 />
               </>
             )}

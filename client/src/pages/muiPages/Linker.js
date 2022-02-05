@@ -102,25 +102,32 @@ export default function Linker() {
       filterable: false,
       sortable: false,
       renderCell: (params) => {
+        const isDisabled = userObj.id !== params.row.UserId;
         return (
-          userObj.id === params.row.UserId && (
-            <Box key={params.id}>
-              <Tooltip title="Delete">
+          <Box key={params.id}>
+            <Tooltip title="Delete">
+              <span>
                 <IconButton
                   onClick={() => {
                     setDeleteId(params.id);
                   }}
+                  disabled={isDisabled}
                 >
-                  <DeleteRoundedIcon color="error" />
+                  <DeleteRoundedIcon color={isDisabled ? "gray" : "error"} />
                 </IconButton>
-              </Tooltip>
-              <Tooltip title="Edit">
-                <IconButton onClick={() => setEdit(params.row)}>
-                  <EditRoundedIcon color="primary" />
+              </span>
+            </Tooltip>
+            <Tooltip title="Edit">
+              <span>
+                <IconButton
+                  onClick={() => setEdit(params.row)}
+                  disabled={isDisabled}
+                >
+                  <EditRoundedIcon color={isDisabled ? "gray" : "primary"} />
                 </IconButton>
-              </Tooltip>
-            </Box>
-          )
+              </span>
+            </Tooltip>
+          </Box>
         );
       },
     },
@@ -231,7 +238,7 @@ export default function Linker() {
     <>
       <NavBar
         page={page}
-        onAddNewLink={() => setShowAddNew(true)}
+        onAdd={() => setShowAddNew(true)}
         isLoading={loading}
         onSearch={(searchVal) => {
           handleSearch(searchVal);

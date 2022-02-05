@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Grid, Paper, Typography } from "@mui/material";
+import { Button, Card, Grid, Paper, Typography } from "@mui/material";
 import { DateTimeConverter } from "../MiscJavascript";
 import { deletePinById } from "../../api/api";
 import { useHistory } from "react-router";
@@ -9,21 +9,21 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
   pinContent: {
-    padding: 10,
+    padding: 8,
   },
   pinDescription: {
     "& span": { fontWeight: "bold" },
     "& button": { margin: 10, width: "25%" },
     paddingLeft: 10,
     paddingRight: 10,
-    marginTop: 5,
-    marginBottom: 5,
+    marginTop: 4,
   },
 });
 
 function Pin({ pin, onAlert, setUpdated }) {
   const classes = useStyles();
   const userObj = JSON.parse(sessionStorage.user);
+  const isAdmin = userObj.role === "Admin";
   const [showModal, setModal] = useState(false);
   const history = useHistory();
   const [loading, setLoading] = useState(false);
@@ -70,13 +70,20 @@ function Pin({ pin, onAlert, setUpdated }) {
           />
         )}
         {(!showModal || showModal === "delete") && (
-          <Paper variant="outlined" className={classes.pinDescription}>
-            <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
+          <Card className={classes.pinDescription}>
+            <Typography
+              variant="body2"
+              style={{
+                whiteSpace: "pre-line",
+                paddingTop: 20,
+                paddingBottom: 20,
+              }}
+            >
               {pin.description}
             </Typography>
-          </Paper>
+          </Card>
         )}
-        <Paper variant="outlined" className={classes.pinDescription}>
+        <Card className={classes.pinDescription}>
           <Typography variant="body1" align="center" style={{ paddingTop: 5 }}>
             <span>Details</span>
           </Typography>
@@ -85,8 +92,10 @@ function Pin({ pin, onAlert, setUpdated }) {
             {pin.id}
           </Typography>
           <Typography variant="body2" align="left">
-            <span>Created By: @</span>
-            {pin.User.username}
+            <span>Created By: </span>
+            {pin?.User?.name?.length > 0
+              ? pin.User.name
+              : `@${pin.User.username}`}
           </Typography>
           <Typography variant="body2" align="left">
             <span>Date Created: </span>
@@ -97,7 +106,7 @@ function Pin({ pin, onAlert, setUpdated }) {
             {DateTimeConverter(pin.updatedAt)}
           </Typography>
 
-          {!showModal && userObj.id === pin.UserId && (
+          {!showModal && (userObj.id === pin.UserId || isAdmin) && (
             <Grid container direction="row" justifyContent="center">
               <Button
                 variant="contained"
@@ -134,7 +143,7 @@ function Pin({ pin, onAlert, setUpdated }) {
               openModal={showModal === "delete" ? true : false}
             />
           )}
-        </Paper>
+        </Card>
       </Paper>
     </Grid>
   );

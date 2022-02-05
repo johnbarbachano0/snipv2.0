@@ -11,19 +11,22 @@ import {
 } from "@mui/material";
 import { useHistory } from "react-router-dom";
 import { themeContext } from "./ThemeContext";
+import { CapitalizeFirstLetters } from "../MiscJavascript";
 
 const useStyles = makeStyles({
   cardContent: {
     height: 75,
     overflow: "auto",
+    overflowX: "hidden",
   },
   cardContentExpand: {
     height: 200,
     overflow: "auto",
+    overflowX: "hidden",
   },
 });
 
-function CardBody({ id, title, desc, username }) {
+function CardBody({ id, title, desc, username, name }) {
   const { darkMode } = useContext(themeContext);
   const classes = useStyles();
   const history = useHistory();
@@ -35,22 +38,26 @@ function CardBody({ id, title, desc, username }) {
         avatar={
           <Avatar sx={{ bgcolor: "red" }}>
             <Typography variant="h5">
-              {username.charAt(0).toUpperCase()}
+              {name?.length > 0
+                ? name.charAt(0).toUpperCase()
+                : username.charAt(0).toUpperCase()}
             </Typography>
           </Avatar>
         }
         title={
           <Typography variant="h6" sx={{ maxHeight: 65 }}>
             {expanded
-              ? title.length > 61
+              ? title.length > 50
                 ? title.substr(0, 50) + "..."
                 : title
-              : title.length > 26
+              : title.length > 25
               ? title.substr(0, 25) + "..."
               : title}
           </Typography>
         }
-        subheader={`@${username}`}
+        subheader={
+          name?.length > 0 ? `${CapitalizeFirstLetters(name)}` : `@${username}`
+        }
         sx={{
           bgcolor: darkMode ? "#02475E" : "#8AB6D6",
           paddingBottom: 0.5,

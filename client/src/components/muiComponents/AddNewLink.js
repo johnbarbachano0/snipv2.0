@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { postNewLink } from "../../api/api";
@@ -30,7 +30,9 @@ const useStyles = makeStyles({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 550,
-    maxWidth: "80vw",
+    maxWidth: "95vw",
+    maxHeight: "95vh",
+    overflowY: "auto",
   },
   gridItem: {
     padding: 5,
@@ -60,6 +62,8 @@ const tags = [
 function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
   const classes = useStyles();
   const userObj = JSON.parse(sessionStorage.user);
+  const submitEl = useRef(null);
+  const cancelEl = useRef(null);
   const {
     register,
     handleSubmit,
@@ -69,6 +73,16 @@ function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
   });
   const [loading, setLoading] = useState(false);
   const [tag, setTag] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = document.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+  }, []);
+
+  function handleKeyPress(event) {
+    event.key === "Enter" && submitEl?.current?.focus()?.click();
+    event.key === "Escape" && cancelEl?.current?.focus()?.click();
+  }
 
   function handleChange(event) {
     const { value } = event.target;
@@ -88,8 +102,13 @@ function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
     });
   }
 
+  const handleClose = (event, reason) => {
+    if (reason && reason === "backdropClick") return;
+    onAddNewCancel();
+  };
+
   return (
-    <Modal open={openModal} onClose={onAddNewCancel}>
+    <Modal open={openModal} onClose={handleClose}>
       <Grid
         container
         direction="column"
@@ -108,6 +127,7 @@ function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
               {...register("title")}
               placeholder="Title..."
               required
+              autoFocus
               autoComplete="off"
               fullWidth={true}
               inputProps={{
@@ -217,16 +237,16 @@ function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
               loading={loading}
               variant="contained"
               sx={{ margin: 1 }}
+              ref={submitEl}
             >
               Submit
             </LoadingButton>
             <Button
               variant="contained"
               color="nuetral"
-              onClick={() => {
-                onAddNewCancel();
-              }}
+              onClick={() => onAddNewCancel()}
               sx={{ margin: 1 }}
+              ref={cancelEl}
             >
               Cancel
             </Button>

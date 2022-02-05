@@ -8,31 +8,31 @@ import { IoLogoNodejs } from "react-icons/io";
 import { GrMysql } from "react-icons/gr";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
+const styles = {
+  container: {
+    marginTop: 8,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    textAlign: "center",
+  },
+  favIcon: {
+    fontSize: 40,
+    position: "relative",
+    top: 10,
+    color: "red",
+  },
+};
+
 function About() {
   const page = "about";
   return (
     <>
       <NavBar isLoading={false} page={page} />
-      <Box
-        sx={{
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          textAlign: "center",
-        }}
-      >
+      <Box sx={styles.container}>
         <Typography variant="h4">
-          Built with{" "}
-          <FavoriteIcon
-            style={{
-              fontSize: 40,
-              position: "relative",
-              top: 10,
-              color: "red",
-            }}
-          />{" "}
-          using MERN and MaterialUI.
+          Built with <FavoriteIcon style={styles.favIcon} /> using MERN and
+          MaterialUI.
         </Typography>
         <Grid
           container
@@ -67,7 +67,7 @@ function About() {
             <Box>NodeJS</Box>
           </Grid>
         </Grid>
-        <span style={{ fontStyle: "italic" }}>~and~</span>
+        <span style={{ fontStyle: "italic" }}> & </span>
         <Box>
           <SiMaterialui style={{ fontSize: 70 }} />
           <Box>Material UI</Box>

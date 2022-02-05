@@ -6,6 +6,9 @@ import Linker from "./pages/muiPages/Linker";
 import PinPage from "./pages/muiPages/PinPage";
 import Profile from "./pages/muiPages/Profile";
 import About from "./pages/muiPages/About";
+import Access from "./pages/muiPages/Access";
+import History from "./pages/muiPages/History";
+import Tracker from "./pages/muiPages/Tracker";
 import Logout from "./pages/muiPages/Logout";
 import Login from "./pages/muiPages/Login";
 import ErrorPage from "./pages/muiPages/ErrorPage";
@@ -24,6 +27,9 @@ function App() {
           <ProtectedRoute path="/profile/" exact component={Profile} />
           <ProtectedRoute path="/about" exact component={About} />
           <ProtectedRoute path="/links" exact component={Linker} />
+          <ProtectedRoute path="/history" exact component={History} />
+          <ProtectedRoute path="/access" exact component={Access} />
+          <ProtectedRoute path="/tracker" exact component={Tracker} />
           <ProtectedRoute path="/pin/:id" exact component={PinPage} />
           <ProtectedRoute path="/logout/:id" exact component={Logout} />
           <Route path="/timeout/:id/:timeoutType" component={Timeout} />

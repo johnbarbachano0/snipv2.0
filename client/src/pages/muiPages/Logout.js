@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { logoutUser } from "../../api/api";
-import { getLogoutImage } from "../../components/MiscJavascript";
+import {
+  getLogoutImage,
+  getLogoutImageMobile,
+} from "../../components/MiscJavascript";
 import { Box, Fab, Paper, Tooltip, Typography } from "@mui/material";
 import { useHistory, useParams } from "react-router-dom";
+import useWindowDimensions from "../../components/useWindowDimension";
+import useCountdown from "../../components/useCountdown";
 
 function Logout() {
+  const dimension = useWindowDimensions();
+  const isMobile = dimension?.width < 480;
   const { id } = useParams();
   const [logoutImage, setLogoutImage] = useState("");
   const history = useHistory();
-  const [timer, setTimer] = useState(60);
+  const [countdown] = useCountdown(60);
 
   useEffect(() => {
-    const image = getLogoutImage();
+    const image = isMobile ? getLogoutImageMobile() : getLogoutImage();
     setLogoutImage(image);
     logoutUser(id);
     sessionStorage.clear();
@@ -19,15 +26,9 @@ function Logout() {
   }, []);
 
   useEffect(() => {
-    timer === -1 && history.push("/login");
-    const timerOut = setTimeout(() => {
-      setTimer(timer - 1);
-    }, 1000);
-    return () => {
-      clearTimeout(timerOut);
-    };
+    countdown === 0 && history.push("/login");
     /* eslint-disable react-hooks/exhaustive-deps */
-  }, [timer]);
+  }, [countdown]);
 
   return (
     <Box
@@ -38,7 +39,7 @@ function Logout() {
         backgroundSize: "cover",
         backgroundColor: "#c1c085e7",
         color: "#000",
-        height: "100vh",
+        height: isMobile ? dimension.height : "100vh",
         width: "100vw",
       }}
     >
@@ -83,7 +84,7 @@ function Logout() {
           sx={{ position: "absolute", right: 15, top: 10 }}
           onClick={() => history.push("/login")}
         >
-          <Typography variant="h5">{timer}</Typography>
+          <Typography variant="h5">{countdown}</Typography>
         </Fab>
       </Tooltip>
     </Box>

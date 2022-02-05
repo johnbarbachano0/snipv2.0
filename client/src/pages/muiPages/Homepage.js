@@ -4,9 +4,9 @@ import CardBody from "../../components/muiComponents/CardBody";
 import AddNewPin from "../../components/muiComponents/AddNewPin";
 import Alerts from "../../components/muiComponents/Alerts";
 import ScrollToTop from "../../components/muiComponents/ScrollToTop";
-import Loading from "../../components/Loading";
 import { getSearchPins } from "../../api/api";
-import { Grid, Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
+import PinSkeleton from "../../components/muiComponents/PinSkeleton";
 
 function Homepage() {
   const page = "home";
@@ -17,11 +17,6 @@ function Homepage() {
   const [showAlert, setShowAlert] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
 
-  function handleAlert(type, message) {
-    setAlert({ type, message });
-    setShowAlert(true);
-  }
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowAlert(false);
@@ -30,6 +25,17 @@ function Homepage() {
       clearTimeout(timer);
     };
   }, [showAlert]);
+
+  useEffect(() => {
+    handleSearch("");
+    sessionStorage.alert &&
+      (() => {
+        const deletePinAlert = JSON.parse(sessionStorage.alert);
+        const { type, message } = deletePinAlert;
+        handleAlert(type, message);
+        sessionStorage.removeItem("alert");
+      })();
+  }, [isUpdated]); // eslint-disable-line
 
   function handleSearch(searchVal) {
     setLoading(true);
@@ -45,54 +51,52 @@ function Homepage() {
       });
   }
 
-  useEffect(() => {
-    setLoading(true);
-    handleSearch("");
-    sessionStorage.alert &&
-      (() => {
-        const deletePinAlert = JSON.parse(sessionStorage.alert);
-        const { type, message } = deletePinAlert;
-        handleAlert(type, message);
-        sessionStorage.removeItem("alert");
-      })();
-  }, [isUpdated]); // eslint-disable-line
+  function handleAddNewPin(type, message) {
+    handleAlert(type, message);
+    setIsUpdated(!isUpdated);
+    setAddNewPin(false);
+  }
+
+  function handleAlert(type, message) {
+    setAlert({ type, message });
+    setShowAlert(true);
+  }
 
   return (
     <>
       <NavBar
         page={page}
         isLoading={isLoading}
-        onAddNewPin={() => {
-          setAddNewPin(true);
-        }}
-        onSearch={(searchVal) => {
-          handleSearch(searchVal);
-        }}
+        onAdd={() => setAddNewPin(true)}
+        onSearch={(searchVal) => handleSearch(searchVal)}
       />
-      <Box margin={5} marginTop={8}>
-        <Grid
-          container
-          direction="row"
-          justifyContent="space-evenly"
-          alignItems="stretch"
-          spacing={2}
-        >
-          {listOfPins &&
-            listOfPins.map((pin) => {
-              return (
-                <Grid item xs={12} sm={6} md={4} xl={3} key={pin.id}>
-                  <CardBody
-                    id={pin.id}
-                    title={pin.title}
-                    desc={pin.description}
-                    username={pin.User.username}
-                  />
-                </Grid>
-              );
-            })}
-        </Grid>{" "}
-      </Box>
-
+      {isLoading && <PinSkeleton />}
+      {!isLoading && listOfPins.length > 0 && (
+        <Box margin={2} marginTop={8}>
+          <Grid
+            container
+            direction="row"
+            justifyContent="space-evenly"
+            alignItems="stretch"
+            spacing={2}
+          >
+            {listOfPins &&
+              listOfPins.map((pin) => {
+                return (
+                  <Grid item xs={12} sm={6} md={4} xl={3} key={pin.id}>
+                    <CardBody
+                      id={pin.id}
+                      title={pin.title}
+                      desc={pin.description}
+                      username={pin.User.username}
+                      name={pin.User.name}
+                    />
+                  </Grid>
+                );
+              })}
+          </Grid>
+        </Box>
+      )}
       {showAlert && (
         <Alerts
           type={alert.type}
@@ -102,21 +106,10 @@ function Homepage() {
       )}
       {showAddNewPin && (
         <AddNewPin
-          onAddNewCancel={() => {
-            setAddNewPin(false);
-          }}
-          onAddNewPin={(type, message) => {
-            handleAlert(type, message);
-            setIsUpdated(!isUpdated);
-            setAddNewPin(false);
-          }}
+          onAddNewCancel={() => setAddNewPin(false)}
+          onAddNewPin={(type, message) => handleAddNewPin(type, message)}
           openModal={showAddNewPin}
         />
-      )}
-      {isLoading && (
-        <div className="center">
-          <Loading type="cylon" color="#1DB9C3" height="10rem" width="10rem" />
-        </div>
       )}
       <ScrollToTop />
     </>

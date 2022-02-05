@@ -58,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
     Users.hasMany(models.AuditTrail);
     Users.hasMany(models.Comments);
     Users.hasMany(models.Links);
+    Users.hasMany(models.Changelogs);
   };
   return Users;
 };

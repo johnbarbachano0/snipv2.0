@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../schema/loginSchema";
@@ -10,6 +10,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import { themeContext } from "../../components/muiComponents/ThemeContext";
 require("dotenv").config();
 
 const styles = {
@@ -21,11 +22,13 @@ const styles = {
 };
 
 function Login() {
+  const { darkMode } = useContext(themeContext);
   const history = useHistory();
   const [errorMsg, setErrorMsg] = useState("");
   const [uname, setUname] = useState("");
   const [pword, setPword] = useState("");
   const [loading, setLoading] = useState(false);
+  const submitEl = useRef(null);
   const {
     register,
     handleSubmit,
@@ -35,13 +38,18 @@ function Login() {
   });
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setErrorMsg("");
-    }, 3000);
-    return () => {
-      clearTimeout(timer);
-    };
+    const timer = setTimeout(() => setErrorMsg(""), 3000);
+    return () => clearTimeout(timer);
   }, [errorMsg]);
+
+  useEffect(() => {
+    const unsubscribe = window.addEventListener("keydown", handleKeyPress);
+    return () => unsubscribe;
+  }, []);
+
+  function handleKeyPress(event) {
+    event.key === "Enter" && submitEl?.current?.focus()?.click();
+  }
 
   function onSubmit(data) {
     setLoading(true);
@@ -84,10 +92,18 @@ function Login() {
         fullWidth={true}
         inputProps={{
           maxLength: 250,
+          autoCapitalize: "none",
         }}
         InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
         required
+        autoFocus
         error={errors.username ? true : false}
+        sx={{
+          borderRadius: 4,
+          background: darkMode
+            ? "rgba(0, 0, 0, .90)"
+            : "rgba(218, 223, 225, .95)",
+        }}
       />
       {errors.username && (
         <Typography color="error" textAlign="left" fontSize={14}>
@@ -106,11 +122,18 @@ function Login() {
         type="password"
         inputProps={{
           maxLength: 250,
+          autoCapitalize: "none",
         }}
         InputProps={{ style: { fontSize: 16, borderRadius: 15 } }}
         required
         error={errors.password || errorMsg ? true : false}
-        sx={{ marginTop: 1 }}
+        sx={{
+          marginTop: 1,
+          borderRadius: 4,
+          background: darkMode
+            ? "rgba(0, 0, 0, .90)"
+            : "rgba(218, 223, 225, .90)",
+        }}
       />
       {errors.password && (
         <Typography color="error" textAlign="left" fontSize={14}>
@@ -140,6 +163,7 @@ function Login() {
         variant="contained"
         fullWidth={true}
         sx={{ marginTop: 1, padding: 1.5, borderRadius: 3 }}
+        ref={submitEl}
       >
         Submit
       </LoadingButton>
