@@ -50,30 +50,8 @@ export default function useAccessTable() {
       pdfWidth: 150,
       rowAlign: "center",
       colAlign: "left",
-      renderCell: (data) => {
-        if (data !== null) {
-          const list = [];
-          for (const [key, value] of Object.entries(data)) {
-            list.push(
-              <li key={key}>
-                {Capitalize(key)}: {keyValueValidator(key, value)}
-              </li>
-            );
-          }
-          return list;
-        }
-        return "";
-      },
-      renderExport: (data) => {
-        if (data !== null) {
-          const list = [];
-          for (const [key, value] of Object.entries(data)) {
-            list.push(`${Capitalize(key)} : ${keyValueValidator(key, value)}`);
-          }
-          return list.join("\r").replace(new RegExp(`"`, "g"), "");
-        }
-        return "";
-      },
+      renderCell: (data) => handleCell(data),
+      renderExport: (data, type) => handleExport(data, type),
     },
     {
       id: "newValue",
@@ -83,30 +61,8 @@ export default function useAccessTable() {
       pdfWidth: 150,
       rowAlign: "center",
       colAlign: "left",
-      renderCell: (data) => {
-        if (data !== null) {
-          const list = [];
-          for (const [key, value] of Object.entries(data)) {
-            list.push(
-              <li key={key}>
-                {Capitalize(key)}: {keyValueValidator(key, value)}
-              </li>
-            );
-          }
-          return list;
-        }
-        return "";
-      },
-      renderExport: (data) => {
-        if (data !== null) {
-          const list = [];
-          for (const [key, value] of Object.entries(data)) {
-            list.push(`${Capitalize(key)} : ${keyValueValidator(key, value)}`);
-          }
-          return list.join("\r").replace(new RegExp(`"`, "g"), "");
-        }
-        return "";
-      },
+      renderCell: (data) => handleCell(data),
+      renderExport: (data, type) => handleExport(data, type),
     },
     {
       id: "error",
@@ -140,6 +96,37 @@ export default function useAccessTable() {
       renderExport: (data) => DateTimeConverter(data),
     },
   ];
+
+  const handleCell = (data) => {
+    if (data !== null) {
+      const list = [];
+      for (const [key, value] of Object.entries(data)) {
+        list.push(
+          <li key={key}>
+            {Capitalize(key)}: {keyValueValidator(key, value)}
+          </li>
+        );
+      }
+      return list;
+    }
+    return "";
+  };
+
+  const handleExport = (data, type) => {
+    var list = [];
+    if (data !== null && type === "csv") {
+      for (const [key, value] of Object.entries(data)) {
+        list.push(`${Capitalize(key)} : ${keyValueValidator(key, value)}`);
+      }
+      return list.join("\r").replace(new RegExp(`"`, "g"), "");
+    } else if (data !== null && type === "pdf") {
+      for (const [key, value] of Object.entries(data)) {
+        list.push(`${Capitalize(key)} : ${keyValueValidator(key, value)}\r\n`);
+      }
+      return list;
+    }
+    return "";
+  };
 
   const keyValueValidator = (key, value) => {
     return key === "accessToken" || key === "refreshToken"

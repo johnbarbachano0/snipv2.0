@@ -159,7 +159,7 @@ export function deletePinById(id) {
 //Update Pin
 export function patchPin(data) {
   const header = getHeader();
-  const url = `${process.env.REACT_APP_SERVER}/pin/id/${data.PinId}`;
+  const url = `${process.env.REACT_APP_SERVER}/pin/id/${data.id}`;
   const isUpdated = axios
     .patch(url, { data: data, ...header })
     .then((res) => {
@@ -317,6 +317,48 @@ export function getUsers(searchVal, id) {
 //Patch Users
 export function patchUsers(data) {
   const url = `${process.env.REACT_APP_SERVER}/auth/users/${data.id}`;
+  const users = axios
+    .patch(url, { data: data })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((error) => {
+      window.location.href = `/error/500`;
+    });
+  return users;
+}
+
+//Get All Changelogs
+export function getChangelogs(searchVal, id) {
+  const url = `${process.env.REACT_APP_SERVER}/changelogs/user/${id}?query=${searchVal}`;
+  const changelogs = axios
+    .get(url, config)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((error) => {
+      window.location.href = `/error/500`;
+    });
+  return changelogs;
+}
+
+//Post Changelogs
+export function postNewChangelog(data) {
+  const url = `${process.env.REACT_APP_SERVER}/changelogs`;
+  const users = axios
+    .post(url, { data: data })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((error) => {
+      window.location.href = `/error/500`;
+    });
+  return users;
+}
+
+//Patch Changelogs
+export function patchChangelog(data) {
+  const url = `${process.env.REACT_APP_SERVER}/changelogs/id/${data.id}`;
   const users = axios
     .patch(url, { data: data })
     .then((res) => {

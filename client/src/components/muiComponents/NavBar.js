@@ -22,16 +22,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AppMenu from "./AppMenu";
 import NavActionsMobile from "./NavActionsMobile";
 
-function NavBar({
-  page,
-  isLoading,
-  onAddNewPin,
-  onAddNewLink,
-  onAddNewComment,
-  onSearch,
-  onExport,
-  onPdf,
-}) {
+function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
   const classes = useStyles();
   const { darkMode, setDark, isMobile } = useContext(themeContext);
   const [anchorEl, setAnchorEl] = useState("");
@@ -46,10 +37,13 @@ function NavBar({
     page === "home" ||
     page === "links" ||
     page === "history" ||
-    page === "access";
-  const showAdd = page === "home" || page === "links" || page === "pin";
-  const showExport = page === "history" || page === "access";
-  const showPdf = page === "history" || page === "access";
+    page === "access" ||
+    page === "tracker";
+  const showAdd =
+    page === "home" || page === "links" || page === "pin" || page === "tracker";
+  const showExport =
+    page === "history" || page === "access" || page === "tracker";
+  const showPdf = page === "history" || page === "access" || page === "tracker";
 
   useEffect(() => {
     navSearchEl?.current?.focus();
@@ -154,19 +148,11 @@ function NavBar({
               placeholder="Search..."
               size="small"
               variant="filled"
-              disabled={
-                isLoading ||
-                page === "pin" ||
-                page === "about" ||
-                page === "profile"
-              }
+              disabled={isLoading || !showSearch}
               value={searchVal}
               onChange={(e) => setSearchVal(e.target.value)}
               sx={{
-                display:
-                  page === "pin" || page === "about" || page === "profile"
-                    ? "none"
-                    : "flex",
+                display: !showSearch ? "none" : "flex",
               }}
             />
           </Grid>
@@ -184,20 +170,18 @@ function NavBar({
                         ? "Add New Link"
                         : page === "pin"
                         ? "Add New Comment"
+                        : page === "tracker"
+                        ? "Add New Tracker"
                         : "Add New"
                     }
-                    sx={{ marginLeft: 0.5, marginRight: 0.5 }}
                   >
                     <span>
                       <Fab
                         size="small"
                         color="secondary"
-                        onClick={() => {
-                          page === "home" && onAddNewPin();
-                          page === "links" && onAddNewLink();
-                          page === "pin" && onAddNewComment();
-                        }}
+                        onClick={() => onAdd()}
                         disabled={isLoading}
+                        sx={{ marginLeft: 0.25, marginRight: 0.25 }}
                       >
                         <AddIcon />
                       </Fab>
@@ -205,16 +189,14 @@ function NavBar({
                   </Tooltip>
                 )}
                 {showExport && (
-                  <Tooltip
-                    title={"Export to CSV"}
-                    sx={{ marginLeft: 0.5, marginRight: 0.5 }}
-                  >
+                  <Tooltip title={"Export to CSV"}>
                     <span>
                       <Fab
                         size="small"
                         color="secondary"
                         onClick={() => onExport()}
                         disabled={isLoading}
+                        sx={{ marginLeft: 0.25, marginRight: 0.25 }}
                       >
                         <DownloadIcon />
                       </Fab>
@@ -222,30 +204,26 @@ function NavBar({
                   </Tooltip>
                 )}
                 {showPdf && (
-                  <Tooltip
-                    title={"Export to PDF"}
-                    sx={{ marginLeft: 0.5, marginRight: 0.5 }}
-                  >
+                  <Tooltip title={"Export to PDF"}>
                     <span>
                       <Fab
                         size="small"
                         color="secondary"
                         onClick={() => onPdf()}
                         disabled={isLoading}
+                        sx={{ marginLeft: 0.25, marginRight: 0.25 }}
                       >
                         <PdfIcon />
                       </Fab>{" "}
                     </span>
                   </Tooltip>
                 )}
-                <Tooltip
-                  title={darkMode ? "Lights on" : "Lights off"}
-                  sx={{ marginLeft: 0.5, marginRight: 0.5 }}
-                >
+                <Tooltip title={darkMode ? "Lights on" : "Lights off"}>
                   <Fab
                     size="small"
                     color="secondary"
                     onClick={() => setDark(!darkMode)}
+                    sx={{ marginLeft: 0.25, marginRight: 0.25 }}
                   >
                     {darkMode ? (
                       <LightModeIcon className={classes.lightIcon} />
@@ -258,11 +236,13 @@ function NavBar({
             )}
             {isMobile && (
               <>
-                <Tooltip
-                  title={"Actions"}
-                  sx={{ marginLeft: 0.5, marginRight: 0.5 }}
-                >
-                  <Fab size="small" color="secondary" onClick={handleActions}>
+                <Tooltip title={"Actions"}>
+                  <Fab
+                    size="small"
+                    color="secondary"
+                    onClick={handleActions}
+                    sx={{ marginLeft: 0.5, marginRight: 0.5 }}
+                  >
                     <MoreVertIcon />
                   </Fab>
                 </Tooltip>
@@ -271,9 +251,7 @@ function NavBar({
                   actionsAnchorEl={actionsAnchorEl}
                   actionsOpen={actionsOpen}
                   handleActionsClose={handleActionsClose}
-                  onAddNewPin={() => onAddNewPin()}
-                  onAddNewLink={() => onAddNewLink()}
-                  onAddNewComment={() => onAddNewComment()}
+                  onAdd={() => onAdd()}
                   onExport={() => onExport()}
                   showAdd={showAdd}
                   showExport={showExport}

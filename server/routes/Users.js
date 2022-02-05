@@ -50,7 +50,7 @@ router.post("/register", (req, res, next) => {
           username: newUser.username,
           hash: await hash,
           lastLogin: "1990-01-01 00:00:00",
-          provider: "local",
+          provider: "snip",
         };
         Users.create(postUser)
           .then((user) => {
@@ -263,9 +263,7 @@ router.get("/logout/:userId", (req, res, next) => {
 //Get All Users
 router.get("/users", (req, res, next) => {
   const { query } = req.query;
-  const queryObj = {
-    [Op.like]: `%${query}%`,
-  };
+  const queryObj = { [Op.substring]: query };
   Users.findAll({
     where: {
       [Op.or]: [

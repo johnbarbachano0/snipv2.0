@@ -7,9 +7,7 @@ const { Op } = require("sequelize");
 router.get("/id/:id", (req, res, next) => {
   const { query } = req.query;
   const userId = req.params.id;
-  const queryObj = {
-    [Op.like]: `%${query}%`,
-  };
+  const queryObj = { [Op.substring]: query };
   Users.findAll({
     where: { id: userId },
   })
@@ -28,7 +26,7 @@ router.get("/id/:id", (req, res, next) => {
             { action: queryObj },
             { message: queryObj },
             { prevValue: queryObj },
-            { newValue: queryObj },
+            { newValue: query },
             { error: queryObj },
             { "$User.username$": queryObj },
             { createdAt: queryObj },

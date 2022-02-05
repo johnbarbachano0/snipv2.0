@@ -4,7 +4,7 @@ import { Box, Card, Grid, Skeleton } from "@mui/material";
 function PinSkeleton() {
   const skeleton = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   return (
-    <Box margin={5} marginTop={8}>
+    <Box margin={2} marginTop={8}>
       <Grid
         container
         direction="row"

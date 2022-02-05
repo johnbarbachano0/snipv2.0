@@ -23,9 +23,7 @@ function NavActionsMobile({
   actionsAnchorEl,
   actionsOpen,
   handleActionsClose,
-  onAddNewPin,
-  onAddNewLink,
-  onAddNewComment,
+  onAdd,
   showAdd,
   onExport,
   showExport,
@@ -51,9 +49,7 @@ function NavActionsMobile({
       {showAdd && (
         <MenuItem
           onClick={() => {
-            page === "home" && onAddNewPin();
-            page === "links" && onAddNewLink();
-            page === "pin" && onAddNewComment();
+            onAdd();
             handleActionsClose();
           }}
           disabled={isLoading}

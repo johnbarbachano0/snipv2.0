@@ -7,9 +7,7 @@ const { Op } = require("sequelize");
 //Get Search Pins
 router.get("/search", (req, res, next) => {
   const { query } = req.query;
-  const queryObj = {
-    [Op.like]: `%${query}%`,
-  };
+  const queryObj = { [Op.substring]: query };
   Pins.findAll({
     include: {
       model: Users,
@@ -26,6 +24,7 @@ router.get("/search", (req, res, next) => {
       ],
       status: true,
     },
+    order: [["updatedAt", "DESC"]],
   })
     .then((pins) => {
       res.json(pins);

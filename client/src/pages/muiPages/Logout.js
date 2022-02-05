@@ -7,6 +7,7 @@ import {
 import { Box, Fab, Paper, Tooltip, Typography } from "@mui/material";
 import { useHistory, useParams } from "react-router-dom";
 import useWindowDimensions from "../../components/useWindowDimension";
+import useCountdown from "../../components/useCountdown";
 
 function Logout() {
   const dimension = useWindowDimensions();
@@ -14,7 +15,7 @@ function Logout() {
   const { id } = useParams();
   const [logoutImage, setLogoutImage] = useState("");
   const history = useHistory();
-  const [timer, setTimer] = useState(60);
+  const [countdown] = useCountdown(60);
 
   useEffect(() => {
     const image = isMobile ? getLogoutImageMobile() : getLogoutImage();
@@ -25,15 +26,9 @@ function Logout() {
   }, []);
 
   useEffect(() => {
-    timer === -1 && history.push("/login");
-    const timerOut = setTimeout(() => {
-      setTimer(timer - 1);
-    }, 1000);
-    return () => {
-      clearTimeout(timerOut);
-    };
+    countdown === 0 && history.push("/login");
     /* eslint-disable react-hooks/exhaustive-deps */
-  }, [timer]);
+  }, [countdown]);
 
   return (
     <Box
@@ -89,7 +84,7 @@ function Logout() {
           sx={{ position: "absolute", right: 15, top: 10 }}
           onClick={() => history.push("/login")}
         >
-          <Typography variant="h5">{timer}</Typography>
+          <Typography variant="h5">{countdown}</Typography>
         </Fab>
       </Tooltip>
     </Box>

@@ -93,36 +93,50 @@ function MainTable({ loading, rows, columns, onExport, onPdf, filename }) {
     });
   }
 
-  function handleExportRows() {
+  function handleExportRows(exportType) {
     var newArr;
     if (rows?.length > 0) {
       newArr = rows.sort(getComparator(sort.order, sort.field)).map((row) => {
-        const newData = columns.map((col) => {
-          return {
-            [col.id]: col?.renderExport
-              ? col.renderExport(row[col.id])
-              : row[col.id],
-          };
-        });
+        const newData = columns
+          .filter((colData) => colData.id !== "actions")
+          .map((col) => {
+            return {
+              [col.id]: col?.renderExport
+                ? col.renderExport(row[col.id], exportType)
+                : row[col.id],
+            };
+          });
         return Object.assign({}, ...newData);
       });
+
       return newArr;
     } else {
       return [];
     }
   }
 
+  function handleExportColumns() {
+    return columns
+      .filter((column) => column.id !== "actions")
+      .map((column) => {
+        return { label: column.label, key: column.id };
+      });
+  }
+
   function genPdfViewer() {
     return (
       <PDFViewer width={"100%"} height={"100%"}>
-        <PdfComponent rows={handleExportRows()} columns={columns} />
+        <PdfComponent
+          rows={handleExportRows("pdf")}
+          columns={columns.filter((col) => col.id !== "actions")}
+        />
       </PDFViewer>
     );
   }
 
   if (isEmpty && !loading) {
     return (
-      <Card sx={{ textAlign: "center", width: "95%", padding: 2 }}>
+      <Card sx={{ textAlign: "center", width: "100%", padding: 2 }}>
         <Typography>No results found.</Typography>
       </Card>
     );
@@ -225,7 +239,7 @@ function MainTable({ loading, rows, columns, onExport, onPdf, filename }) {
                         align={col.colAlign}
                       >
                         {col?.renderCell
-                          ? col.renderCell(row[col.id], row.id)
+                          ? col.renderCell(row[col.id], row)
                           : row[col.id]}
                       </TableCell>
                     ))}
@@ -246,10 +260,8 @@ function MainTable({ loading, rows, columns, onExport, onPdf, filename }) {
         />
         {!loading && (
           <CSVLink
-            data={handleExportRows()}
-            headers={columns.map((column) => {
-              return { label: column.label, key: column.id };
-            })}
+            data={handleExportRows("csv")}
+            headers={handleExportColumns()}
             target="_blank"
             filename={`${filename}_as_of_${DateTimeConverter(
               Date.now()

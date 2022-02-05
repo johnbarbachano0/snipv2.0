@@ -30,7 +30,9 @@ const useStyles = makeStyles({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 550,
-    maxWidth: "80vw",
+    maxWidth: "95vw",
+    maxHeight: "95vh",
+    overflowY: "auto",
   },
   gridItem: {
     padding: 5,
@@ -100,8 +102,13 @@ function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
     });
   }
 
+  const handleClose = (event, reason) => {
+    if (reason && reason === "backdropClick") return;
+    onAddNewCancel();
+  };
+
   return (
-    <Modal open={openModal} onClose={onAddNewCancel}>
+    <Modal open={openModal} onClose={handleClose}>
       <Grid
         container
         direction="column"
@@ -237,9 +244,7 @@ function AddNewLink({ openModal, onAddNewLink, onAddNewCancel }) {
             <Button
               variant="contained"
               color="nuetral"
-              onClick={() => {
-                onAddNewCancel();
-              }}
+              onClick={() => onAddNewCancel()}
               sx={{ margin: 1 }}
               ref={cancelEl}
             >

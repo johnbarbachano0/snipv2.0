@@ -17,11 +17,6 @@ function Homepage() {
   const [showAlert, setShowAlert] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
 
-  function handleAlert(type, message) {
-    setAlert({ type, message });
-    setShowAlert(true);
-  }
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowAlert(false);
@@ -30,6 +25,17 @@ function Homepage() {
       clearTimeout(timer);
     };
   }, [showAlert]);
+
+  useEffect(() => {
+    handleSearch("");
+    sessionStorage.alert &&
+      (() => {
+        const deletePinAlert = JSON.parse(sessionStorage.alert);
+        const { type, message } = deletePinAlert;
+        handleAlert(type, message);
+        sessionStorage.removeItem("alert");
+      })();
+  }, [isUpdated]); // eslint-disable-line
 
   function handleSearch(searchVal) {
     setLoading(true);
@@ -45,32 +51,28 @@ function Homepage() {
       });
   }
 
-  useEffect(() => {
-    handleSearch("");
-    sessionStorage.alert &&
-      (() => {
-        const deletePinAlert = JSON.parse(sessionStorage.alert);
-        const { type, message } = deletePinAlert;
-        handleAlert(type, message);
-        sessionStorage.removeItem("alert");
-      })();
-  }, [isUpdated]); // eslint-disable-line
+  function handleAddNewPin(type, message) {
+    handleAlert(type, message);
+    setIsUpdated(!isUpdated);
+    setAddNewPin(false);
+  }
+
+  function handleAlert(type, message) {
+    setAlert({ type, message });
+    setShowAlert(true);
+  }
 
   return (
     <>
       <NavBar
         page={page}
         isLoading={isLoading}
-        onAddNewPin={() => {
-          setAddNewPin(true);
-        }}
-        onSearch={(searchVal) => {
-          handleSearch(searchVal);
-        }}
+        onAdd={() => setAddNewPin(true)}
+        onSearch={(searchVal) => handleSearch(searchVal)}
       />
       {isLoading && <PinSkeleton />}
       {!isLoading && listOfPins.length > 0 && (
-        <Box margin={5} marginTop={8}>
+        <Box margin={2} marginTop={8}>
           <Grid
             container
             direction="row"
@@ -104,14 +106,8 @@ function Homepage() {
       )}
       {showAddNewPin && (
         <AddNewPin
-          onAddNewCancel={() => {
-            setAddNewPin(false);
-          }}
-          onAddNewPin={(type, message) => {
-            handleAlert(type, message);
-            setIsUpdated(!isUpdated);
-            setAddNewPin(false);
-          }}
+          onAddNewCancel={() => setAddNewPin(false)}
+          onAddNewPin={(type, message) => handleAddNewPin(type, message)}
           openModal={showAddNewPin}
         />
       )}

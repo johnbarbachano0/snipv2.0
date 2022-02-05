@@ -53,9 +53,10 @@ function ConfirmModal({
               Yes
             </LoadingButton>
             <Button
+              disabled={confirmLoading}
               variant="contained"
               color="nuetral"
-              onClick={onClickCancel}
+              onClick={() => onClickCancel()}
               sx={{ width: "45%", margin: 0.5 }}
             >
               Cancel

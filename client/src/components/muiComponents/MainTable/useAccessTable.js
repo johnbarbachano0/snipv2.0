@@ -36,10 +36,10 @@ export default function useAccessTable() {
       rowAlign: "center",
       colAlign: "center",
       pdfWidth: 40,
-      renderCell: (data, id) => (
+      renderCell: (data, row) => (
         <Select
           value={data}
-          onChange={(e) => handleChange({ role: e.target.value, id })}
+          onChange={(e) => handleChange({ role: e.target.value, id: row.id })}
           sx={{ width: "100%" }}
         >
           <MenuItem value={"Admin"}>Admin</MenuItem>
@@ -100,10 +100,12 @@ export default function useAccessTable() {
       pdfWidth: 50,
       rowAlign: "center",
       colAlign: "center",
-      renderCell: (data, id) => (
+      renderCell: (data, row) => (
         <Switch
           defaultChecked={data}
-          onChange={(e) => handleChange({ status: e.target.checked, id })}
+          onChange={(e) =>
+            handleChange({ status: e.target.checked, id: row.id })
+          }
         />
       ),
       renderExport: (data) => (data ? "Active" : "Inactive"),
