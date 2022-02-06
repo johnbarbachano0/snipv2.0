@@ -1,1 +1,1 @@
-release: npx sequelize-cli db:migrate && npx sequelize-cli db:seed --seed 20220127055222-insert-status
+Web: npm start

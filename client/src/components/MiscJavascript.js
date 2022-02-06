@@ -39,10 +39,19 @@ export function getIcon(value) {
   }
 }
 
-export function DateTimeConverter(ISOdate) {
+export function DateTimeConverter(ISOdate, line) {
   const dateFormat = new Date(ISOdate).toLocaleDateString();
   const timeFormat = new Date(ISOdate).toLocaleTimeString();
-  return dateFormat + " " + timeFormat;
+  if (line === 2) {
+    return (
+      <>
+        <p style={{ padding: 0, margin: 0 }}>{dateFormat}</p>
+        <p style={{ padding: 0, margin: 0 }}>{timeFormat}</p>
+      </>
+    );
+  } else {
+    return dateFormat + " " + timeFormat;
+  }
 }
 
 export function DateConverter(ISOdate) {

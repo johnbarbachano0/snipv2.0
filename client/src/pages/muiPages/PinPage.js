@@ -61,7 +61,7 @@ function PinPage() {
       <NavBar isLoading={false} page={page} onAdd={() => setShowAddNew(true)} />
 
       {pin && comments && (
-        <Box margin={5} marginTop={8}>
+        <Box margin={2} marginTop={8}>
           <Grid container direction="row" justifyContent="center" spacing={1}>
             <Grid item xs={12} md={6}>
               <Pin

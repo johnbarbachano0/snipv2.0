@@ -19,13 +19,12 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import PdfIcon from "@mui/icons-material/PictureAsPdfRounded";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import AppMenu from "./AppMenu";
 import NavActionsMobile from "./NavActionsMobile";
+import AppDrawer from "./AppDrawer";
 
 function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
   const classes = useStyles();
   const { darkMode, setDark, isMobile } = useContext(themeContext);
-  const [anchorEl, setAnchorEl] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchVal, setSearchVal] = useState("");
   const [actionsAnchorEl, setActionsAnchorEl] = useState("");
@@ -76,11 +75,9 @@ function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
   }
 
   function handleMenu(event) {
-    setAnchorEl(event.currentTarget);
     setMenuOpen(true);
   }
   function handleMenuClose() {
-    setAnchorEl("");
     setMenuOpen(false);
   }
 
@@ -89,7 +86,6 @@ function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
     setActionsOpen(true);
   }
   function handleActionsClose() {
-    setAnchorEl("");
     setActionsOpen(false);
   }
 
@@ -111,12 +107,7 @@ function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
             />
             <Box sx={{ display: isMobile ? "none" : "inline" }}>snip</Box>
           </Box>
-          <AppMenu
-            page={page}
-            anchorEl={anchorEl}
-            menuOpen={menuOpen}
-            handleMenuClose={handleMenuClose}
-          />
+          <AppDrawer page={page} open={menuOpen} onClose={handleMenuClose} />
         </Grid>
         {showSearch && (
           <Grid item xs={isMobile ? 8 : 5} className={classes.searchBox}>

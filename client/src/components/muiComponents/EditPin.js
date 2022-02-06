@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { themeContext } from "./ThemeContext";
-import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
+import { Button, Card, Grid, TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -78,7 +78,7 @@ function EditPin({ pin, setModal, onAlert, setUpdated }) {
 
   return (
     <Grid container>
-      <Paper variant="outlined" sx={{ width: "100%", padding: 1 }}>
+      <Card sx={{ width: "100%", padding: 1 }}>
         <Grid item>
           <Controller
             name="title"
@@ -155,7 +155,7 @@ function EditPin({ pin, setModal, onAlert, setUpdated }) {
             </Button>
           </Grid>
         </Grid>
-      </Paper>
+      </Card>
     </Grid>
   );
 }

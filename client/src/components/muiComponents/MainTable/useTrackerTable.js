@@ -65,7 +65,7 @@ export default function useTrackerTable() {
       pdfWidth: 75,
       rowAlign: "center",
       colAlign: "center",
-      renderCell: (data) => DateTimeConverter(data),
+      renderCell: (data) => DateTimeConverter(data, 2),
       renderExport: (data) => DateTimeConverter(data),
     },
     {
@@ -76,7 +76,7 @@ export default function useTrackerTable() {
       pdfWidth: 75,
       rowAlign: "center",
       colAlign: "center",
-      renderCell: (data) => DateTimeConverter(data),
+      renderCell: (data) => DateTimeConverter(data, 2),
       renderExport: (data) => DateTimeConverter(data),
     },
     {
