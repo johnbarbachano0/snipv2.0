@@ -10,7 +10,7 @@ import PinSkeleton from "../../components/muiComponents/PinSkeleton";
 
 function Homepage() {
   const page = "home";
-  const [isLoading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [listOfPins, setListOfPins] = useState("");
   const [showAddNewPin, setAddNewPin] = useState(false);
   const [alert, setAlert] = useState("");
@@ -66,12 +66,12 @@ function Homepage() {
     <>
       <NavBar
         page={page}
-        isLoading={isLoading}
+        isLoading={loading}
         onAdd={() => setAddNewPin(true)}
         onSearch={(searchVal) => handleSearch(searchVal)}
       />
-      {isLoading && <PinSkeleton />}
-      {!isLoading && listOfPins.length > 0 && (
+      {loading && <PinSkeleton />}
+      {!loading && listOfPins.length > 0 && (
         <Box margin={2} marginTop={8}>
           <Grid
             container

@@ -37,6 +37,7 @@ app.use(
 );
 
 require("../middlewares/strategy");
+require("../middlewares/socketio");
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -54,6 +55,8 @@ const AuditTrailRouter = require("../routes/AuditTrail");
 app.use("/history", AuditTrailRouter);
 const ChangelogsRouter = require("../routes/Changelogs");
 app.use("/changelogs", ChangelogsRouter);
+const MaintenanceRouter = require("../routes/Maintenance");
+app.use("/maintenance", MaintenanceRouter);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);

@@ -1,7 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { themeContext } from "./ThemeContext";
 import {
-  Button,
   Box,
   Drawer,
   List,

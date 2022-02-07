@@ -16,6 +16,7 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Capitalize, DateTimeConverter } from "../MiscJavascript";
 import useCountdown from "../useCountdown";
+import { useSelector } from "react-redux";
 
 const styles = {
   container: {
@@ -47,11 +48,9 @@ function NewChangelog({ type, openModal, onAdd, onCancel, defaultVal }) {
   const [isFirstRun, setIsFirstRun] = useState(true);
   const { isMobile } = useContext(themeContext);
   const userObj = JSON.parse(sessionStorage.user);
+  const { maintenance } = useSelector((state) => state.maintenance.value);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const DocumentStatus = [
-    { id: 1, description: "draft" },
-    { id: 2, description: "final" },
-  ];
+  const DocumentStatus = [...maintenance].pop().DocumentStatus;
   const [cancelEl, setCancelEl] = useState("Cancel");
   const [currFieldVal, setCurrFieldVal] = useState({
     ...defaultVal,
