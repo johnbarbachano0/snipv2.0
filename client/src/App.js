@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import ThemeContext from "./components/muiComponents/ThemeContext";
 import Homepage from "./pages/muiPages/Homepage";
 import Linker from "./pages/muiPages/Linker";
+import LiveChat from "./pages/muiPages/LiveChat";
 import PinPage from "./pages/muiPages/PinPage";
 import Profile from "./pages/muiPages/Profile";
 import About from "./pages/muiPages/About";
@@ -30,6 +31,7 @@ function App() {
             <ProtectedRoute path="/profile/" exact component={Profile} />
             <ProtectedRoute path="/about" exact component={About} />
             <ProtectedRoute path="/links" exact component={Linker} />
+            <ProtectedRoute path="/livechat" exact component={LiveChat} />
             <ProtectedRoute path="/history" exact component={History} />
             <ProtectedRoute path="/access" exact component={Access} />
             <ProtectedRoute path="/tracker" exact component={Tracker} />

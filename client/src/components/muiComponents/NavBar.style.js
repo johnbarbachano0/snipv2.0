@@ -37,11 +37,13 @@ const useStyles = makeStyles({
     color: "white",
   },
   deleteIcon: {
+    color: "white",
     "&:hover": { color: "#AE431E" },
     "&:active": { color: "#F90716" },
     cursor: "pointer",
   },
   searchIcon: {
+    color: "white",
     "&:hover": { color: "#009DAE" },
     "&:active": { color: "#71DFE7" },
     cursor: "pointer",

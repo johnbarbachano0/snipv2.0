@@ -160,6 +160,7 @@ function Tracker() {
         onExport={handleExport}
         onPdf={handlePdf}
         onAdd={handleNavbarAdd}
+        addLabel={"Add New Tracker"}
       />
 
       {loading && (

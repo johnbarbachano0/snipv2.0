@@ -58,7 +58,12 @@ function PinPage() {
 
   return (
     <>
-      <NavBar isLoading={false} page={page} onAdd={() => setShowAddNew(true)} />
+      <NavBar
+        isLoading={false}
+        page={page}
+        onAdd={() => setShowAddNew(true)}
+        addLabel={"Add New Comment"}
+      />
 
       {pin && comments && (
         <Box margin={2} marginTop={8}>

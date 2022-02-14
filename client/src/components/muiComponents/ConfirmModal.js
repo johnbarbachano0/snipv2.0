@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from "react";
-import { Button, Grid, Modal, Paper, Typography } from "@mui/material";
+import { Box, Button, Grid, Modal, Paper, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 const style = {
   container: {
     border: "1px solid #fff",
     borderRadius: 5,
-    padding: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
     position: "absolute",
     top: "50%",
     left: "50%",
@@ -41,26 +42,35 @@ function ConfirmModal({
           <Grid item>
             <Typography variant="h6">{action}</Typography>
           </Grid>
-          <Grid item>
-            <LoadingButton
-              onClick={onClickYes}
-              color="primary"
-              loading={confirmLoading}
-              variant="contained"
-              sx={{ width: "45%", margin: 0.5 }}
-              ref={submitEl}
+          <Grid item sx={{ width: "100%" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              Yes
-            </LoadingButton>
-            <Button
-              disabled={confirmLoading}
-              variant="contained"
-              color="nuetral"
-              onClick={() => onClickCancel()}
-              sx={{ width: "45%", margin: 0.5 }}
-            >
-              Cancel
-            </Button>
+              <LoadingButton
+                onClick={onClickYes}
+                color="primary"
+                loading={confirmLoading}
+                variant="contained"
+                sx={{ width: "35%", margin: 0.5 }}
+                ref={submitEl}
+              >
+                Yes
+              </LoadingButton>
+              <Button
+                disabled={confirmLoading}
+                variant="contained"
+                color="nuetral"
+                onClick={() => onClickCancel()}
+                sx={{ width: "35%", margin: 0.5 }}
+              >
+                Cancel
+              </Button>
+            </Box>
           </Grid>
         </Grid>
       </Paper>

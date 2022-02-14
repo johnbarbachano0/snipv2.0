@@ -43,29 +43,29 @@ export function postNewUser(data) {
 }
 
 //Login User
-export function authenticateUser(data) {
-  const url = `${process.env.REACT_APP_SERVER}/auth/login`;
-  const authUser = axios
-    .post(url, data, config)
-    .then((res) => {
-      const user = res.data.user;
-      const session = res.data.session;
-      const sessionId = res.data.sessionId;
-      sessionStorage.setItem("isAuth", JSON.stringify(true));
-      sessionStorage.setItem("user", JSON.stringify(user));
-      sessionStorage.setItem("session", JSON.stringify(session));
-      sessionStorage.setItem("sessionId", sessionId);
-      if (user?.id) {
-        return true;
-      } else {
-        return false;
-      }
-    })
-    .catch((error) => {
-      window.location.href = `/error/500`;
-    });
-  return authUser;
-}
+// export function authenticateUser(data) {
+//   const url = `${process.env.REACT_APP_SERVER}/auth/login`;
+//   const authUser = axios
+//     .post(url, data, config)
+//     .then((res) => {
+//       const user = res.data.user;
+//       const session = res.data.session;
+//       const sessionId = res.data.sessionId;
+//       sessionStorage.setItem("isAuth", JSON.stringify(true));
+//       sessionStorage.setItem("user", JSON.stringify(user));
+//       sessionStorage.setItem("session", JSON.stringify(session));
+//       sessionStorage.setItem("sessionId", sessionId);
+//       if (user?.id) {
+//         return true;
+//       } else {
+//         return false;
+//       }
+//     })
+//     .catch((error) => {
+//       window.location.href = `/error/500`;
+//     });
+//   return authUser;
+// }
 
 //Logout User
 export function logoutUser(userId) {

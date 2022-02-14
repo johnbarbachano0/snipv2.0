@@ -11,9 +11,11 @@ const errorHandler = (error, req, res, next) => {
   if (error?.name === "InternalOAuthError") {
     res.redirect("/auth/login/error");
   } else if (statusCode.toString().charAt(0) === "4") {
-    res.redirect(`${process.env.REACT_APP_CLIENT}/error/${statusCode}`);
+    res.send(error);
+    // res.redirect(`${process.env.REACT_APP_CLIENT}/error/${statusCode}`);
   } else {
-    res.redirect(`${process.env.REACT_APP_CLIENT}/error/500`);
+    res.send(error);
+    // res.redirect(`${process.env.REACT_APP_CLIENT}/error/500`);
   }
   // const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   // res.status(statusCode);

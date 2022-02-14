@@ -69,6 +69,7 @@ function Homepage() {
         isLoading={loading}
         onAdd={() => setAddNewPin(true)}
         onSearch={(searchVal) => handleSearch(searchVal)}
+        addLabel={"Add New Pin"}
       />
       {loading && <PinSkeleton />}
       {!loading && listOfPins.length > 0 && (

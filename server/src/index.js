@@ -8,6 +8,17 @@ const cors = require("cors");
 const middlewares = require("../middlewares/errorHandlers");
 const db = require("../models");
 const passport = require("passport");
+const http = require("http");
+const { Server } = require("socket.io");
+
+//Initialize server
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  },
+});
 
 //Body Parser
 app.use(express.json());
@@ -28,7 +39,6 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    // store: sessionStore,
     cookie: {
       secure: false,
       maxAge: 1000 * 60 * 60 * 12, // Equals 1 day (1 day * 24 hr/1 day * 60 min/1 hr * 60 sec/1 min * 1000 ms / 1 sec)
@@ -37,7 +47,6 @@ app.use(
 );
 
 require("../middlewares/strategy");
-require("../middlewares/socketio");
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -58,13 +67,16 @@ app.use("/changelogs", ChangelogsRouter);
 const MaintenanceRouter = require("../routes/Maintenance");
 app.use("/maintenance", MaintenanceRouter);
 
+//socketIo middleware
+require("../middlewares/socketio")(io);
+
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
 
 //mySQL connection
 db.sequelize.sync().then(() => {
   const port = process.env.PORT || 4007;
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`Listening at port http://localhost:${port}`);
   });
 });

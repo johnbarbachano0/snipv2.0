@@ -22,7 +22,15 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import NavActionsMobile from "./NavActionsMobile";
 import AppDrawer from "./AppDrawer";
 
-function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
+function NavBar({
+  page,
+  isLoading,
+  onAdd,
+  onSearch,
+  onExport,
+  onPdf,
+  addLabel,
+}) {
   const classes = useStyles();
   const { darkMode, setDark, isMobile } = useContext(themeContext);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -90,7 +98,7 @@ function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
   }
 
   return (
-    <AppBar className={classes.appBar}>
+    <AppBar className={classes.appBar} color={"primary"}>
       <Grid
         container
         direction="row"
@@ -113,7 +121,7 @@ function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
           <Grid item xs={isMobile ? 8 : 5} className={classes.searchBox}>
             <TextField
               className={classes.textSearch}
-              color="warning"
+              color="secondary"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -133,9 +141,15 @@ function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
                     </Tooltip>
                   </InputAdornment>
                 ),
+                style: {
+                  color: "white",
+                },
               }}
               hiddenLabel
-              inputProps={{ autoCapitalize: "none", ref: navSearchEl }}
+              inputProps={{
+                autoCapitalize: "none",
+                ref: navSearchEl,
+              }}
               placeholder="Search..."
               size="small"
               variant="filled"
@@ -153,19 +167,7 @@ function NavBar({ page, isLoading, onAdd, onSearch, onExport, onPdf }) {
             {!isMobile && (
               <>
                 {showAdd && (
-                  <Tooltip
-                    title={
-                      page === "home"
-                        ? "Add New Pin"
-                        : page === "links"
-                        ? "Add New Link"
-                        : page === "pin"
-                        ? "Add New Comment"
-                        : page === "tracker"
-                        ? "Add New Tracker"
-                        : "Add New"
-                    }
-                  >
+                  <Tooltip title={addLabel}>
                     <span>
                       <Fab
                         size="small"

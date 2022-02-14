@@ -243,6 +243,7 @@ export default function Linker() {
         onSearch={(searchVal) => {
           handleSearch(searchVal);
         }}
+        addLabel={"Add New Link"}
       />
       <Container
         sx={{

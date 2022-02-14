@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../schema/loginSchema";
 import { removeSpace } from "../MiscJavascript";
-import { authenticateUser } from "../../api/api";
 import { useHistory } from "react-router-dom";
 import { Box, Fab, TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -11,6 +10,8 @@ import GoogleIcon from "@mui/icons-material/Google";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { themeContext } from "../../components/muiComponents/ThemeContext";
+import { useAuthenticateUserMutation } from "../../services/AuthService";
+
 require("dotenv").config();
 
 const styles = {
@@ -36,6 +37,7 @@ function Login() {
   } = useForm({
     resolver: yupResolver(loginSchema),
   });
+  const [authenticateUser] = useAuthenticateUserMutation();
 
   useEffect(() => {
     const timer = setTimeout(() => setErrorMsg(""), 3000);
@@ -54,11 +56,10 @@ function Login() {
   function onSubmit(data) {
     setLoading(true);
     authenticateUser(data).then((res) => {
-      if (res === true) {
-        setLoading(false);
+      setLoading(false);
+      if (res?.data?.user) {
         history.push("/");
-      } else if (res === false) {
-        setLoading(false);
+      } else {
         setErrorMsg("Incorrect password.");
       }
     });

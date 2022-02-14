@@ -20,14 +20,16 @@ function Logout() {
   useEffect(() => {
     const image = isMobile ? getLogoutImageMobile() : getLogoutImage();
     setLogoutImage(image);
-    logoutUser(id);
+    const unsubscribe = logoutUser(id);
     sessionStorage.clear();
+    return () => unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     countdown === 0 && history.push("/login");
-    /* eslint-disable react-hooks/exhaustive-deps */
+    return () => countdown;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countdown]);
 
   return (

@@ -109,3 +109,10 @@ export function CapitalizeFirstLetters(str) {
   }
   return arr.join(" ");
 }
+
+export const getHourMin = (date) => {
+  return new Date(date).toLocaleTimeString(navigator.language, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};

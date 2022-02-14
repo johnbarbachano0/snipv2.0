@@ -8,6 +8,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Typography,
 } from "@mui/material";
 import { useHistory } from "react-router-dom";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
@@ -18,9 +19,29 @@ import InfoIcon from "@mui/icons-material/Info";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
 import ChangeCircle from "@mui/icons-material/ChangeCircleOutlined";
+import SendIcon from "@mui/icons-material/SendRounded";
+import { CapitalizeFirstLetters } from "../MiscJavascript";
 
 const style = {
-  item: { "&:hover": { color: "#00A19D" } },
+  container: {},
+  item: { "&:hover": { color: "#fffb00" } },
+  itemDisabled: { color: "#fffb00" },
+  containerLogo: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    "& *": { padding: 1 },
+  },
+  logo: {
+    fontStyle: "normal",
+    fontFamily: "Sonsie One",
+    fontSize: 20,
+    color: "#fffb00",
+    textAlign: "center",
+    paddingLeft: 2,
+  },
+  user: { textAlign: "center", paddingRight: 2 },
 };
 
 const topDrawerItems = (page, userObj) => {
@@ -29,43 +50,57 @@ const topDrawerItems = (page, userObj) => {
       label: "Home",
       icon: <HomeRoundedIcon />,
       path: "/",
-      isDisplayed: page !== "home",
+      isDisplayed: true,
+      isDisabled: page === "home",
     },
     {
       label: "Links",
       icon: <LanguageRoundedIcon />,
       path: "/links",
-      isDisplayed: page !== "links",
+      isDisplayed: true,
+      isDisabled: page === "links",
+    },
+    {
+      label: "Live Chat",
+      icon: <SendIcon />,
+      path: "/livechat",
+      isDisplayed: true,
+      isDisabled: page === "livechat",
     },
     {
       label: "Tracker",
       icon: <ChangeCircle />,
       path: "/tracker",
-      isDisplayed: page !== "tracker",
+      isDisplayed: true,
+      isDisabled: page === "tracker",
     },
     {
       label: "Profile",
       icon: <AssignmentIndRoundedIcon />,
       path: "/profile",
-      isDisplayed: page !== "profile",
+      isDisplayed: true,
+      isDisabled: page === "profile",
     },
     {
       label: "Access",
       icon: <AccountIcon />,
       path: "/access",
-      isDisplayed: page !== "access" && userObj.role === "Admin",
+      isDisplayed: userObj.role === "Admin",
+      isDisabled: page === "access",
     },
     {
       label: "History",
       icon: <HistoryIcon />,
       path: "/history",
-      isDisplayed: page !== "history",
+      isDisplayed: true,
+      isDisabled: page === "history",
     },
     {
       label: "About",
       icon: <InfoIcon />,
       path: "/about",
-      isDisplayed: page !== "about",
+      isDisplayed: true,
+      isDisabled: page === "about",
     },
   ];
 };
@@ -75,23 +110,35 @@ const bottomDrawerItems = (page, userObj) => [
     label: "Logout",
     icon: <ExitToAppRoundedIcon />,
     path: `/logout/${userObj.id}`,
-    isDisplayed: page !== "logout",
-    additionalStyle: { "&:hover": { color: "#FF0000" } },
+    isDisplayed: true,
+    additionalStyle: { "&:hover": { color: "red" } },
   },
 ];
 
 function AppDrawer({ page, open, onClose }) {
-  const { isMobile } = useContext(themeContext);
+  const { darkMode, isMobile } = useContext(themeContext);
   const history = useHistory();
   const drawerLoc = isMobile ? "bottom" : "left";
   const userObj = JSON.parse(sessionStorage.user);
 
   const list = (anchor) => (
     <Box
-      sx={{ width: anchor === "bottom" ? "auto" : 200 }}
+      sx={{
+        width: anchor === "bottom" ? "auto" : 400,
+        flex: 1,
+        backgroundColor: darkMode ? "" : "#144552",
+        color: "white",
+      }}
       role="presentation"
       onClick={onClose}
     >
+      <Box sx={style.containerLogo}>
+        <Typography sx={style.logo}>snip</Typography>
+        <Typography sx={style.user}>
+          @{CapitalizeFirstLetters(userObj?.name || "") || userObj?.username}
+        </Typography>
+      </Box>
+      <Divider />
       <List>
         {topDrawerItems(page, userObj).map((item, index) => (
           <ListItem
@@ -103,9 +150,13 @@ function AppDrawer({ page, open, onClose }) {
               ...item.additionalStyle,
               display: item.isDisplayed ? "flex" : "none ",
             }}
+            disabled={item.isDisabled}
           >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.label} />
+            <ListItemIcon sx={{ color: "#fffb00" }}>{item.icon}</ListItemIcon>
+            <ListItemText
+              primary={item.label}
+              sx={{ color: item.isDisabled ? style.itemDisabled : null }}
+            />
           </ListItem>
         ))}
       </List>
@@ -121,7 +172,7 @@ function AppDrawer({ page, open, onClose }) {
               ...item.additionalStyle,
             }}
           >
-            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemIcon sx={{ color: "red" }}>{item.icon}</ListItemIcon>
             <ListItemText primary={item.label} />
           </ListItem>
         ))}

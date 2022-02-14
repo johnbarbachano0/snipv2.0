@@ -51,6 +51,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    socketId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    socketStatus: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   });
 
   Users.associate = (models) => {
