@@ -10,8 +10,6 @@ module.exports = function (io) {
       { UserId: userId, status: true, displayName },
     ];
 
-    console.log(`Connected UserId: ${userId} with SocketId: ${socket.id}`);
-
     //Connected emit
     io.sockets.emit(
       "receive_message",
@@ -21,11 +19,9 @@ module.exports = function (io) {
 
     //Send Message listener
     socket.on("send_message", async (data) => {
-      console.log(data.receiveId);
       if (data?.receiveId === 0) {
         io.sockets.emit("receive_message", { ...data, isSent: true }, false);
       } else {
-        console.log(data);
         const rcvSocketId = await getSocketId(data.receiveId);
         const sndSocketId = await getSocketId(data.userId);
 
@@ -52,8 +48,6 @@ module.exports = function (io) {
     socket.on("disconnect", async () => {
       socket.disconnect();
       await updateUser(userId, null, false);
-      const msg = `Disconnected UserId: ${userId} with SocketId: ${socket.id}`;
-      console.log(msg);
       io.sockets.emit(
         "receive_message",
         connMessage("left", displayName, userId)

@@ -71,8 +71,6 @@ const CustomTextField = styled(TextField)(() => ({
 
 function Chat({ roomData, loading, onSend, messageList, chatWith }) {
   const { height } = useWindowDimensions();
-  console.log("chatroommessageList");
-  console.log(messageList);
   const isMessagesEmpty = messageList?.length === 0;
   const [fieldValues, setFieldValues] = useState({});
   const submitEl = useRef(null);
