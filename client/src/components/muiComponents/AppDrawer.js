@@ -21,6 +21,8 @@ import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
 import ChangeCircle from "@mui/icons-material/ChangeCircleOutlined";
 import SendIcon from "@mui/icons-material/SendRounded";
 import { CapitalizeFirstLetters } from "../MiscJavascript";
+import useWindowDimensions from "../useWindowDimension";
+import ArrowIcon from "@mui/icons-material/ArrowLeftRounded";
 
 const style = {
   container: {},
@@ -42,6 +44,7 @@ const style = {
     paddingLeft: 2,
   },
   user: { textAlign: "center", paddingRight: 2 },
+  arrowIcon: { color: "#fffb00", fontSize: 30 },
 };
 
 const topDrawerItems = (page, userObj) => {
@@ -117,6 +120,7 @@ const bottomDrawerItems = (page, userObj) => [
 
 function AppDrawer({ page, open, onClose }) {
   const { darkMode, isMobile } = useContext(themeContext);
+  const { height } = useWindowDimensions();
   const history = useHistory();
   const drawerLoc = isMobile ? "bottom" : "left";
   const userObj = JSON.parse(sessionStorage.user);
@@ -144,19 +148,21 @@ function AppDrawer({ page, open, onClose }) {
           <ListItem
             button
             key={index}
-            onClick={() => history.push(item.path)}
+            onClick={() => !item.isDisabled && history.push(item.path)}
             sx={{
               ...style.item,
               ...item.additionalStyle,
               display: item.isDisplayed ? "flex" : "none ",
             }}
-            disabled={item.isDisabled}
+            selected={item.isDisabled}
+            dense={height < 600 || isMobile}
           >
             <ListItemIcon sx={{ color: "#fffb00" }}>{item.icon}</ListItemIcon>
             <ListItemText
               primary={item.label}
               sx={{ color: item.isDisabled ? style.itemDisabled : null }}
             />
+            {item.isDisabled && <ArrowIcon sx={style.arrowIcon} />}
           </ListItem>
         ))}
       </List>

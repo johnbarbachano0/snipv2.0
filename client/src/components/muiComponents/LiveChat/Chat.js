@@ -14,6 +14,7 @@ import { styled } from "@mui/system";
 import MessageBox from "./MessageBox";
 import useWindowDimensions from "../../useWindowDimension";
 import { Capitalize } from "../../MiscJavascript";
+import ChatIcon from "@mui/icons-material/ChatBubbleRounded";
 
 // style
 const styles = {
@@ -23,8 +24,9 @@ const styles = {
   },
   header: {
     color: "white",
-    backgroundColor: "#004545",
+    backgroundColor: "#144550",
     textAlign: "center",
+    padding: 0.5,
   },
   contents: {
     width: "100%",
@@ -48,6 +50,15 @@ const styles = {
     autocapitalize: "sentences",
     padding: 8.5,
   },
+  chat: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    backgroundColor: "#144550",
+    textAlign: "center",
+    color: "white",
+    padding: 0.5,
+  },
 };
 
 const CustomTextField = styled(TextField)(() => ({
@@ -58,9 +69,11 @@ const CustomTextField = styled(TextField)(() => ({
   },
 }));
 
-function Chat({ roomData, loading, onSend, messageList }) {
+function Chat({ roomData, loading, onSend, messageList, chatWith }) {
   const { height } = useWindowDimensions();
-  const isMessagesEmpty = messageList.length === 0;
+  console.log("chatroommessageList");
+  console.log(messageList);
+  const isMessagesEmpty = messageList?.length === 0;
   const [fieldValues, setFieldValues] = useState({});
   const submitEl = useRef(null);
   const chatboxEl = useRef(null);
@@ -101,19 +114,31 @@ function Chat({ roomData, loading, onSend, messageList }) {
         createdAt: new Date(Date.now()).toISOString(),
         userId: roomData.userId,
         user: roomData.user,
-        roomId: "global_room",
         isSent: false,
+        type: 1, // type: 1 === global chat
+        receiveId: chatWith.userId,
       });
       setFieldValues({});
     }
   };
 
+  const ChatComponent = () => {
+    return (
+      <Box sx={styles.chat}>
+        <ChatIcon />
+        <Typography>
+          {chatWith.userId === 0 ? "Everyone" : `@${chatWith.displayName}`}
+        </Typography>
+      </Box>
+    );
+  };
+
   return (
     <Card sx={styles.container}>
-      <CardHeader title="Live Chat" sx={styles.header} />
+      <CardHeader component={ChatComponent} sx={styles.header} />
       <CardContent
         sx={{
-          height: height - 195,
+          height: height - 162.5,
           maxHeight: height,
           overflowY: "scroll",
         }}
