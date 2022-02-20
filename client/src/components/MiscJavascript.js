@@ -116,3 +116,7 @@ export const getHourMin = (date) => {
     minute: "2-digit",
   });
 };
+
+export const removeArrayDuplicates = (arr, key) => {
+  return [...new Map(arr.map((item) => [item[key], item])).values()];
+};

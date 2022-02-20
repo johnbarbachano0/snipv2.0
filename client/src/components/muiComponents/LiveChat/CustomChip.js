@@ -11,10 +11,10 @@ function CustomChip({ user, onChatWith }) {
   return (
     <Tooltip title={user?.displayName} placement={"right"}>
       <Chip
-        key={user.UserId}
-        avatar={<Avatar>{user.displayName.charAt(0).toUpperCase()}</Avatar>}
+        key={user?.UserId}
+        avatar={<Avatar>{user?.displayName.charAt(0).toUpperCase()}</Avatar>}
         label={
-          userObj.id === user.UserId
+          userObj.id === user?.UserId
             ? "You"
             : user?.displayName.length <= 12
             ? user?.displayName
@@ -28,8 +28,8 @@ function CustomChip({ user, onChatWith }) {
           padding: 1.5,
         }}
         onClick={
-          userObj.id !== user.UserId
-            ? () => handleClick(user.UserId, user.displayName)
+          userObj.id !== user?.UserId
+            ? () => handleClick(user?.UserId, user?.displayName)
             : null
         }
       />

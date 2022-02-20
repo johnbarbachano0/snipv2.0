@@ -5,17 +5,21 @@ module.exports = function (io) {
     const userId = socket?.handshake?.auth?.userId;
     await updateUser(userId, socket.id, true);
     const displayName = await findUser(userId);
-    const initOnlineUsers = [
-      ...(await getOnlineUsers()),
-      { UserId: userId, status: true, displayName },
-    ];
+    const initOnlineUsers = await getOnlineUsers();
 
     //Connected emit
     io.sockets.emit(
       "receive_message",
       connMessage("joined", displayName, userId)
     );
-    io.sockets.emit("online_users", false, initOnlineUsers);
+    io.sockets.to(socket.id).emit("online_users", false, initOnlineUsers);
+    io.sockets.emit("online_users", false, [
+      {
+        UserId: userId,
+        status: true,
+        displayName,
+      },
+    ]);
 
     //Send Message listener
     socket.on("send_message", async (data) => {
@@ -52,11 +56,7 @@ module.exports = function (io) {
         "receive_message",
         connMessage("left", displayName, userId)
       );
-      io.sockets.emit("online_users", true, {
-        UserId: userId,
-        status: false,
-        displayName,
-      });
+      io.sockets.emit("online_users", true, userId);
     });
   });
 };

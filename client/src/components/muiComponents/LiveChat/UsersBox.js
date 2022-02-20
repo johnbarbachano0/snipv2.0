@@ -40,7 +40,6 @@ const styles = {
 function UsersBox({ onlineUsers, setChatWith }) {
   const userObj = JSON.parse(sessionStorage.user);
   const count = onlineUsers?.length || 0;
-
   const handleClick = (userId, displayName) => {
     setChatWith({ userId, displayName });
   };
@@ -58,30 +57,21 @@ function UsersBox({ onlineUsers, setChatWith }) {
   );
 
   const list = () => {
+    const sender = onlineUsers?.filter((user) => user?.UserId === userObj.id);
+    const receivers = onlineUsers?.filter(
+      (user) => user?.UserId !== userObj.id && user?.status !== false
+    );
     return (
       <>
-        {onlineUsers
-          .filter((user) => user.status !== false && userObj.id === user.UserId)
-          .map((user) => {
-            return (
-              <CustomChip
-                user={user}
-                onChatWith={handleClick}
-                key={user.UserId}
-              />
-            );
-          })}
-        {onlineUsers
-          .filter((user) => user.status !== false && userObj.id !== user.UserId)
-          .map((user) => {
-            return (
-              <CustomChip
-                user={user}
-                onChatWith={handleClick}
-                key={user.UserId}
-              />
-            );
-          })}
+        {[...sender, ...receivers].map((user) => {
+          return (
+            <CustomChip
+              user={user}
+              onChatWith={handleClick}
+              key={user?.UserId}
+            />
+          );
+        })}
       </>
     );
   };
@@ -94,7 +84,7 @@ function UsersBox({ onlineUsers, setChatWith }) {
         sx={styles.header}
       />
       <CardContent sx={styles.content}>
-        {onlineUsers?.length > 0 ? list() : <Typography>...</Typography>}
+        {count > 0 ? list() : <Typography>...</Typography>}
       </CardContent>
     </Card>
   );

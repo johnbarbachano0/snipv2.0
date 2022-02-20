@@ -5,6 +5,7 @@ import NavBar from "../../components/muiComponents/NavBar";
 import Chat from "../../components/muiComponents/LiveChat/Chat";
 import { io } from "socket.io-client";
 import UsersBox from "../../components/muiComponents/LiveChat/UsersBox";
+import { removeArrayDuplicates } from "../../components/MiscJavascript";
 require("dotenv").config();
 
 const styles = {
@@ -22,12 +23,11 @@ function LiveChat() {
   const [loading, setLoading] = useState(false);
   const userObj = JSON?.parse(sessionStorage?.user);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const room = {
+  const roomData = {
     userId: userObj.id,
     user: userObj?.name || userObj?.username,
   };
-  // eslint-disable-next-line no-unused-vars
-  const [roomData, setRoomData] = useState(room);
+
   const [chatWith, setChatWith] = useState({
     userId: 0,
     displayName: "chatbot",
@@ -55,6 +55,7 @@ function LiveChat() {
   useEffect(() => {
     handleOnlineUsers();
     return () => socket.current.removeAllListeners("online_users");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -82,17 +83,19 @@ function LiveChat() {
   };
 
   const handleOnlineUsers = () => {
-    socket.current.on("online_users", (isUpdate, data) => {
-      if (isUpdate) {
-        setOnlineUsers((prevOnlineUsers) =>
-          prevOnlineUsers
-            .map((user) =>
-              user.UserId === data.UserId ? { ...user, ...data } : user
-            )
-            .filter((user) => user.status !== false)
-        );
+    socket.current.on("online_users", (isLogout, data) => {
+      if (!isLogout) {
+        setOnlineUsers((prevUsers) => {
+          if (prevUsers.length === 0) return data;
+          const newArr = [...prevUsers, ...data].filter(
+            (user) => user.status !== false
+          );
+          return removeArrayDuplicates(newArr, "UserId");
+        });
       } else {
-        setOnlineUsers(data);
+        setOnlineUsers((prevUsers) =>
+          prevUsers.filter((user) => user.UserId !== data)
+        );
       }
     });
   };
